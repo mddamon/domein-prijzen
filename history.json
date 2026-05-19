@@ -339,7 +339,7 @@
         {
           "r": "Mijndomein",
           "e": ".com",
-          "fy": 0.01,
+          "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/producten/domeinnaam",
           "incl_vat": true
@@ -347,7 +347,7 @@
         {
           "r": "Mijndomein",
           "e": ".eu",
-          "fy": 0.01,
+          "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/producten/domeinnaam",
           "incl_vat": true
@@ -355,7 +355,7 @@
         {
           "r": "Mijndomein",
           "e": ".be",
-          "fy": 0.01,
+          "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/producten/domeinnaam",
           "incl_vat": true
@@ -571,40 +571,40 @@
         {
           "r": "Hostnet",
           "e": ".nl",
-          "fy": 23.0,
-          "rn": 0.1,
+          "fy": 0.1,
+          "rn": 23.0,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": false
         },
         {
           "r": "Hostnet",
           "e": ".com",
-          "fy": 27.0,
-          "rn": 9.0,
+          "fy": 9.0,
+          "rn": 27.0,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": false
         },
         {
           "r": "Hostnet",
           "e": ".eu",
-          "fy": 26.5,
-          "rn": 5.0,
+          "fy": 5.0,
+          "rn": 26.5,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": false
         },
         {
           "r": "Hostnet",
           "e": ".be",
-          "fy": 26.0,
-          "rn": null,
+          "fy": null,
+          "rn": 26.0,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": false
         },
         {
           "r": "Hostnet",
           "e": ".org",
-          "fy": 32.4,
-          "rn": null,
+          "fy": null,
+          "rn": 32.4,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": false
         },
@@ -614,7 +614,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "GoDaddy",
