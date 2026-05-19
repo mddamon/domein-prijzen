@@ -126,7 +126,7 @@ canvas { max-height: 320px; }
 <script>
 const META_DEFAULT = {
   your_brand: "Mijndomein",
-  competitors: ["TransIP", "Strato", "Vimexx", "Yourhosting", "Hostnet", "GoDaddy", "Shopify"],
+  competitors: ["Mijndomein", "TransIP", "Strato", "Vimexx", "Yourhosting", "Hostnet", "GoDaddy", "Shopify"],
   extensions: [".nl", ".com", ".eu", ".be", ".org", ".ai"],
   currency: "EUR"
 };
@@ -219,7 +219,7 @@ function renderTabs() {
 function renderChart() {
   const ext = activeExt;
   const labels = HISTORY.runs.map(r => r.date);
-  const colors = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"];
+  const colors = ["#000000","#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b","#e377c2"];
 
   const datasets = META.competitors.map((r, i) => ({
     label: r,
