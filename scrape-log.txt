@@ -4,12 +4,9 @@ LLM fallback: enabled
 
 
 [Mijndomein]
-  Mijndomein .nl: fy=0.01 (proximity)
-  Mijndomein .com: fy=None (proximity)
-  Mijndomein .eu: fy=None (proximity)
-  Mijndomein .be: fy=None (proximity)
-  primary found 1/6 prices, trying LLM fallback...
+  primary found 0/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
+  ! Mijndomein: 0 prices extracted — parser may need updating
 
 [TransIP]
   TransIP .nl: fy=0.49 rn=None
@@ -71,4 +68,4 @@ LLM fallback: enabled
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 2 run(s). ===
+=== Done. 23/48 cells filled. History: 2 run(s). ===

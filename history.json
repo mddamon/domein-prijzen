@@ -331,9 +331,9 @@
         {
           "r": "Mijndomein",
           "e": ".nl",
-          "fy": 0.01,
+          "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
@@ -341,7 +341,7 @@
           "e": ".com",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
@@ -349,7 +349,7 @@
           "e": ".eu",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
@@ -357,7 +357,7 @@
           "e": ".be",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
@@ -365,7 +365,7 @@
           "e": ".org",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
@@ -373,7 +373,7 @@
           "e": ".ai",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/producten/domeinnaam",
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
           "incl_vat": true
         },
         {
