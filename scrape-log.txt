@@ -15,7 +15,7 @@ LLM fallback: enabled
   TransIP .eu: fy=4.0 rn=None
   TransIP .be: fy=6.99 rn=None
   TransIP .org: fy=35.0 rn=None
-  TransIP .ai: fy=4.0 rn=None
+  TransIP .ai: fy=None rn=None
 
 [Strato]
   Strato .nl: fy=0.12 rn=None
@@ -27,12 +27,14 @@ LLM fallback: enabled
   LLM extracted 5/6 prices
 
 [Vimexx]
-  Vimexx .nl: fy=0.48 rn=0.48
-  Vimexx .com: fy=0.48 rn=0.48
-  Vimexx .eu: fy=0.48 rn=0.48
-  Vimexx .be: fy=0.48 rn=0.48
-  Vimexx .org: fy=None rn=None
-  Vimexx .ai: fy=0.48 rn=0.48
+  Vimexx .nl: fy=0.48 rn=0.48 (raw 0.48)
+  Vimexx .com: fy=None rn=None (raw 0.48)
+  Vimexx .eu: fy=None rn=None (raw 0.48)
+  Vimexx .be: fy=None rn=None (raw 0.48)
+  Vimexx .org: fy=None rn=None (raw None)
+  Vimexx .ai: fy=None rn=None (raw 0.48)
+  primary found 1/6 prices, trying LLM fallback...
+  LLM extracted 5/6 prices
 
 [Yourhosting]
   primary found 0/6 prices, trying LLM fallback...
@@ -40,15 +42,15 @@ LLM fallback: enabled
 
 [Hostnet]
   primary found 0/6 prices, trying LLM fallback...
-  LLM extracted 6/6 prices
+  LLM extracted 5/6 prices
 
 [GoDaddy]
-  GoDaddy .nl: fy=None rn=None (0 candidates)
-  GoDaddy .com: fy=None rn=None (0 candidates)
-  GoDaddy .eu: fy=None rn=None (0 candidates)
-  GoDaddy .be: fy=None rn=None (0 candidates)
-  GoDaddy .org: fy=None rn=None (0 candidates)
-  GoDaddy .ai: fy=None rn=None (0 candidates)
+  GoDaddy .nl: fy=None (0 candidates in range)
+  GoDaddy .com: fy=None (0 candidates in range)
+  GoDaddy .eu: fy=None (0 candidates in range)
+  GoDaddy .be: fy=None (0 candidates in range)
+  GoDaddy .org: fy=None (0 candidates in range)
+  GoDaddy .ai: fy=None (0 candidates in range)
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
   ! GoDaddy: 0 prices extracted — parser may need updating
@@ -56,5 +58,7 @@ LLM fallback: enabled
 [Shopify]
   Shopify .com: fy=4.6
   Shopify .org: fy=4.6
+  primary found 2/6 prices, trying LLM fallback...
+  LLM extracted 0/6 prices
 
-=== Done. 29/48 cells filled. History: 2 run(s). ===
+=== Done. 27/48 cells filled. History: 2 run(s). ===

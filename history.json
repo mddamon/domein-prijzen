@@ -419,7 +419,7 @@
         {
           "r": "TransIP",
           "e": ".ai",
-          "fy": 4.0,
+          "fy": null,
           "rn": null,
           "u": "https://www.transip.nl/domeinnaam/ai-domein/",
           "incl_vat": true
@@ -483,30 +483,22 @@
         {
           "r": "Vimexx",
           "e": ".com",
-          "fy": 0.48,
-          "rn": 0.48,
+          "fy": 7.99,
+          "rn": 23.99,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": false
+          "incl_vat": null
         },
         {
           "r": "Vimexx",
           "e": ".eu",
-          "fy": 0.48,
-          "rn": 0.48,
+          "fy": 1.75,
+          "rn": 10.99,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": false
+          "incl_vat": null
         },
         {
           "r": "Vimexx",
           "e": ".be",
-          "fy": 0.48,
-          "rn": 0.48,
-          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": false
-        },
-        {
-          "r": "Vimexx",
-          "e": ".org",
           "fy": null,
           "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
@@ -514,11 +506,19 @@
         },
         {
           "r": "Vimexx",
-          "e": ".ai",
-          "fy": 0.48,
-          "rn": 0.48,
+          "e": ".org",
+          "fy": 11.99,
+          "rn": 24.99,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": false
+          "incl_vat": null
+        },
+        {
+          "r": "Vimexx",
+          "e": ".ai",
+          "fy": 79.95,
+          "rn": 149.99,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": null
         },
         {
           "r": "Yourhosting",
@@ -574,7 +574,7 @@
           "fy": 23.0,
           "rn": 0.1,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "Hostnet",
@@ -582,7 +582,7 @@
           "fy": 27.0,
           "rn": 9.0,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "Hostnet",
@@ -590,7 +590,7 @@
           "fy": 26.5,
           "rn": 5.0,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "Hostnet",
@@ -598,7 +598,7 @@
           "fy": 26.0,
           "rn": null,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "Hostnet",
@@ -606,12 +606,12 @@
           "fy": 32.4,
           "rn": null,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
-          "incl_vat": true
+          "incl_vat": false
         },
         {
           "r": "Hostnet",
           "e": ".ai",
-          "fy": 221.0,
+          "fy": null,
           "rn": null,
           "u": "https://www.hostnet.nl/prijzen-domeinnamen",
           "incl_vat": true
@@ -621,7 +621,7 @@
           "e": ".nl",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/nl-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
@@ -629,7 +629,7 @@
           "e": ".com",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/com-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
@@ -637,7 +637,7 @@
           "e": ".eu",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/eu-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
@@ -645,7 +645,7 @@
           "e": ".be",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/be-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
@@ -653,7 +653,7 @@
           "e": ".org",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/org-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
@@ -661,7 +661,7 @@
           "e": ".ai",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/tlds/ai-domein",
+          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
           "incl_vat": true
         },
         {
