@@ -37,6 +37,17 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python scraper.py
 
+      - name: Upload diagnostic artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-debug-${{ github.run_number }}
+          path: |
+            debug-artifacts/
+            scrape-log.txt
+          retention-days: 7
+          if-no-files-found: warn
+
       - name: Detect price changes
         run: python alert.py
 
