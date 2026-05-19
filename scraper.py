@@ -36,6 +36,25 @@ from bs4 import BeautifulSoup
 
 HISTORY_PATH = Path(__file__).parent / "history.json"
 LOG_PATH = Path(__file__).parent / "scrape-log.txt"
+DEBUG_DIR = Path(__file__).parent / "debug-artifacts"
+DEBUG_DIR.mkdir(exist_ok=True)
+
+
+def _save_debug(label: str, img: Optional[bytes], html: Optional[str], url: str, extras: Optional[dict] = None) -> None:
+    """Sla screenshot + HTML + metadata op voor offline analyse. Pure diagnose."""
+    try:
+        safe = "".join(c if c.isalnum() or c in "-_." else "_" for c in label)
+        if img:
+            (DEBUG_DIR / f"{safe}.png").write_bytes(img)
+        if html:
+            (DEBUG_DIR / f"{safe}.html").write_text(html, encoding="utf-8")
+        meta = {"label": label, "final_url": url, **(extras or {})}
+        (DEBUG_DIR / f"{safe}.meta.json").write_text(
+            json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        log(f"    debug saved: {safe}.{{png,html,meta.json}}")
+    except Exception as e:
+        log(f"    debug save error: {e}")
 
 # Browser-like UA om CDN/WAF te omzeilen die strikt zijn op bot-UA's.
 USER_AGENT = (
@@ -250,8 +269,9 @@ def fetch(url: str, use_browser: bool = False) -> Optional[str]:
     return fetch_http(url)
 
 
-def screenshot_via_url(url: str, wait_ms: int = 8000) -> Optional[bytes]:
-    """Open URL met stealth-Playwright, wacht voor JS-render, neem full-page screenshot."""
+def screenshot_via_url(url: str, wait_ms: int = 8000, debug_label: Optional[str] = None) -> Optional[bytes]:
+    """Open URL met stealth-Playwright, wacht voor JS-render, neem full-page screenshot.
+    Als debug_label gezet → ook HTML + final URL opslaan voor analyse."""
     browser = get_playwright_browser()
     if not browser:
         return None
@@ -273,7 +293,21 @@ def screenshot_via_url(url: str, wait_ms: int = 8000) -> Optional[bytes]:
                 pass
         _human_like_behavior(page, steps=4)
         page.wait_for_timeout(3000)
-        img = page.screenshot(full_page=True, type="png")
+        # Clip op 1400x7500 om binnen Vision API limiet van 8000px te blijven
+        img = page.screenshot(
+            type="png",
+            clip={"x": 0, "y": 0, "width": 1400, "height": 7500}
+        )
+        if debug_label:
+            html = page.content()
+            final_url = page.url
+            title = page.title()
+            _save_debug(debug_label, img, html, final_url, {
+                "title": title,
+                "requested_url": url,
+                "page_height": page.evaluate("document.body.scrollHeight"),
+                "eur_count_in_text": page.evaluate("(document.body.innerText.match(/€/g) || []).length"),
+            })
         context.close()
         time.sleep(INTER_REQUEST_DELAY)
         return img
@@ -287,8 +321,10 @@ def screenshot_via_form_checker(
     test_domain: str,
     input_selectors: Optional[list[str]] = None,
     wait_after_submit_ms: int = 8000,
+    debug_label: Optional[str] = None,
 ) -> Optional[bytes]:
-    """Stealth-Playwright: open checker, typ domein menselijk, submit, screenshot."""
+    """Stealth-Playwright: open checker, typ domein menselijk, submit, screenshot.
+    Bij debug_label → save ook landing-page HTML + final state."""
     if input_selectors is None:
         input_selectors = [
             "input[placeholder*='omein' i]", "input[placeholder*='omain' i]",
@@ -316,13 +352,26 @@ def screenshot_via_form_checker(
             except Exception:
                 pass
         _human_like_behavior(page, steps=2)
+        page.wait_for_timeout(2500)  # extra wait voor async JS-init van zoekvelden
+        # Diagnose: snapshot van LANDING-page voor we de form invullen
+        if debug_label:
+            try:
+                landing_html = page.content()
+                landing_img = page.screenshot(type="png", clip={"x": 0, "y": 0, "width": 1400, "height": 3000})
+                _save_debug(f"{debug_label}-landing", landing_img, landing_html, page.url, {
+                    "title": page.title(),
+                    "input_count": len(page.query_selector_all("input")),
+                    "visible_input_count": page.evaluate("Array.from(document.querySelectorAll('input')).filter(i => i.offsetParent !== null).length"),
+                    "requested_url": checker_url,
+                })
+            except Exception as e:
+                log(f"    landing debug save error: {e}")
         filled = False
         for sel in input_selectors:
             try:
                 loc = page.locator(sel).first
-                loc.wait_for(timeout=2000)
+                loc.wait_for(timeout=4000)
                 loc.click()
-                # Type karakter voor karakter om menselijk gedrag te simuleren
                 import random
                 for ch in test_domain:
                     loc.type(ch, delay=random.randint(60, 180))
@@ -331,7 +380,8 @@ def screenshot_via_form_checker(
                 filled = True
                 log(f"    screenshot_form: filled '{sel}'")
                 break
-            except Exception:
+            except Exception as e:
+                log(f"    screenshot_form: selector '{sel}' failed: {str(e)[:60]}")
                 continue
         if not filled:
             log(f"    screenshot_form: no input at {checker_url}")
@@ -343,7 +393,20 @@ def screenshot_via_form_checker(
             pass
         page.wait_for_timeout(4000)
         _human_like_behavior(page, steps=2)
-        img = page.screenshot(full_page=True, type="png")
+        # Clip op 1400x7500 om binnen Vision API limiet van 8000px te blijven
+        img = page.screenshot(
+            type="png",
+            clip={"x": 0, "y": 0, "width": 1400, "height": 7500}
+        )
+        if debug_label:
+            try:
+                results_html = page.content()
+                _save_debug(f"{debug_label}-results", img, results_html, page.url, {
+                    "title": page.title(),
+                    "eur_count_in_text": page.evaluate("(document.body.innerText.match(/€/g) || []).length"),
+                })
+            except Exception as e:
+                log(f"    results debug save error: {e}")
         context.close()
         time.sleep(INTER_REQUEST_DELAY)
         return img
@@ -777,7 +840,7 @@ def scrape_mijndomein() -> dict[str, PriceRow]:
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
     url = f"https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam={test_domain}"
     out = {e: PriceRow("Mijndomein", e, None, None, url, True) for e in EXTENSIONS}
-    img = screenshot_via_url(url)
+    img = screenshot_via_url(url, debug_label="mijndomein")
     if not img:
         log("  Mijndomein: screenshot failed")
         return out
@@ -899,7 +962,7 @@ def scrape_yourhosting() -> dict[str, PriceRow]:
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
     checker_url = "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/"
     out = {e: PriceRow("Yourhosting", e, None, None, checker_url, True) for e in EXTENSIONS}
-    img = screenshot_via_form_checker(checker_url, test_domain)
+    img = screenshot_via_form_checker(checker_url, test_domain, debug_label="yourhosting")
     if not img:
         log("  Yourhosting: screenshot failed")
         return out
@@ -968,7 +1031,7 @@ def scrape_godaddy() -> dict[str, PriceRow]:
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
     checker_url = "https://www.godaddy.com/nl"
     out = {e: PriceRow("GoDaddy", e, None, None, checker_url, True) for e in EXTENSIONS}
-    img = screenshot_via_form_checker(checker_url, test_domain)
+    img = screenshot_via_form_checker(checker_url, test_domain, debug_label="godaddy")
     if not img:
         log("  GoDaddy: screenshot failed")
         return out
