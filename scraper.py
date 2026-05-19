@@ -51,12 +51,33 @@ LLM_MODEL = "claude-haiku-4-5-20251001"
 EXTENSIONS = [".nl", ".com", ".eu", ".be", ".org", ".ai"]
 REGISTRARS = ["Mijndomein", "TransIP", "Strato", "Vimexx", "Yourhosting", "Hostnet", "GoDaddy", "Shopify"]
 
+# Realistische prijsbereiken per extensie (EUR/jaar). Buiten bereik → null.
+EXT_PRICE_RANGE = {
+    ".nl":  (0.01, 25),
+    ".com": (0.50, 35),
+    ".eu":  (0.50, 35),
+    ".be":  (0.50, 35),
+    ".org": (1.00, 40),
+    ".ai":  (30,   200),
+}
+
 # Sites die zonder JS-render geen prijzen tonen.
 USE_PLAYWRIGHT_FOR = {"Strato", "GoDaddy", "Shopify", "Mijndomein"}
 DISABLE_PLAYWRIGHT = os.getenv("DISABLE_PLAYWRIGHT") == "1"
 
 # Hoe veel prijzen we minstens verwachten per registrar voor we LLM-fallback inzetten.
-LLM_FALLBACK_THRESHOLD = 2  # als < 2 van 6 extensies een prijs hebben → LLM erbij
+# 4 betekent: bij <4 van 6 extensies gevuld → ook LLM raadplegen.
+LLM_FALLBACK_THRESHOLD = 4
+
+
+def validate_price(price: Optional[float], ext: str) -> Optional[float]:
+    """Range-check: prijzen buiten realistische bereik per extensie → None."""
+    if price is None:
+        return None
+    lo, hi = EXT_PRICE_RANGE.get(ext, (0.01, 200))
+    if price < lo or price > hi:
+        return None
+    return price
 
 session = requests.Session()
 session.headers.update({
@@ -244,23 +265,39 @@ def llm_extract(html: str, registrar: str, url: str) -> dict[str, PriceRow]:
         tag.decompose()
     text = soup.get_text("\n", strip=True)[:18000]  # max ~5k tokens
 
-    prompt = f"""Je krijgt de tekst van een domein-registrar pagina. Extraheer de prijzen voor deze TLD-extensies: {", ".join(EXTENSIONS)}.
+    prompt = f"""Je krijgt de tekst van een domein-registrar pagina. Extraheer prijzen voor deze TLD-extensies: {", ".join(EXTENSIONS)}.
 
 Registrar: {registrar}
 Pagina: {url}
 
-Voor elke extensie wil ik:
-- first_year: aanbiedingsprijs eerste jaar in EUR (incl. BTW indien aangegeven; anders incl. BTW aannemen voor NL/BE)
-- renewal: verlengingsprijs jaar 2+ in EUR
-- incl_vat: true als prijs incl. BTW, false als ex BTW, null als niet duidelijk
+Voor elke extensie: first_year (aanbiedingsprijs jaar 1, EUR), renewal (jaar 2+, EUR), incl_vat (true/false/null).
 
-REGELS:
-- Alleen EUR prijzen (USD/anders converteren naar null).
-- Als je twijfelt: null. Verzin NOOIT prijzen.
-- Een "vanaf €X" prijs zonder duidelijke extensie-koppeling: null.
-- Range-check: .nl is meestal €0,01–€20. .ai meestal €60–€120. Onrealistische waardes → null.
+KRITIEKE REGELS — LEES ZORGVULDIG:
 
-Geef ALLEEN deze JSON terug, geen uitleg, geen markdown:
+1. Een prijs MAG alleen worden toegekend aan een extensie als die specifiek aan DIE extensie is gekoppeld in de tekst.
+   - Voorbeeld GOED: tekst zegt ".nl voor €0,49, .com voor €4,99" → fy(.nl)=0.49, fy(.com)=4.99
+   - Voorbeeld FOUT: tekst zegt "Domeinen vanaf €0,01" → fy van ALLE extensies invullen met 0.01. NIET DOEN.
+   - Bij twijfel of een prijs echt bij die extensie hoort → null.
+
+2. "Vanaf"-prijzen (zoals "vanaf €0,01", "v.a. €2,95", "starting at €X"):
+   - Mag ALLEEN gebruikt worden voor de extensie waar dat "vanaf" letterlijk bij staat.
+   - Mag NOOIT gerepliceerd worden over meerdere extensies.
+
+3. Range-checks (waardes buiten range → null):
+   - .nl: €0,01–€25
+   - .com: €0,50–€35
+   - .eu: €0,50–€35
+   - .be: €0,50–€35
+   - .org: €1,00–€40
+   - .ai: €30–€200 (.ai is ALTIJD duur; iets goedkoper dan €30 is fout, gebruik null)
+
+4. USD/andere valuta zonder EUR-equivalent → null.
+
+5. Als een extensie niet voorkomt of geen specifieke prijs heeft → null voor first_year EN renewal.
+
+6. Verzin NOOIT prijzen. Bij twijfel: null.
+
+Geef ALLEEN deze JSON, geen uitleg of markdown:
 {{".nl":{{"first_year":null,"renewal":null,"incl_vat":null}},".com":{{"first_year":null,"renewal":null,"incl_vat":null}},".eu":{{"first_year":null,"renewal":null,"incl_vat":null}},".be":{{"first_year":null,"renewal":null,"incl_vat":null}},".org":{{"first_year":null,"renewal":null,"incl_vat":null}},".ai":{{"first_year":null,"renewal":null,"incl_vat":null}}}}
 
 PAGINA-TEKST:
@@ -280,11 +317,18 @@ PAGINA-TEKST:
             return {}
         data = json.loads(match.group())
         out: dict[str, PriceRow] = {}
+        # Detect het "vanaf-prijs over alle extensies"-antipatroon: als de LLM
+        # >= 4 extensies dezelfde first_year geeft, is dat vrijwel zeker fout.
+        all_fy = [data.get(e, {}).get("first_year") for e in EXTENSIONS]
+        non_null_fy = [v for v in all_fy if v is not None]
+        suspect_uniform = (len(non_null_fy) >= 4 and len(set(non_null_fy)) == 1)
+        if suspect_uniform:
+            log(f"  LLM: detected suspect uniform price {non_null_fy[0]} on {len(non_null_fy)} ext — discarding")
         for ext, prices in data.items():
             if ext not in EXTENSIONS:
                 continue
-            fy = prices.get("first_year")
-            rn = prices.get("renewal")
+            fy = validate_price(prices.get("first_year"), ext) if not suspect_uniform else None
+            rn = validate_price(prices.get("renewal"), ext) if not suspect_uniform else None
             incl = prices.get("incl_vat")
             out[ext] = PriceRow(registrar, ext, fy, rn, url, incl)
         log(f"  LLM extracted {sum(1 for r in out.values() if r.fy is not None or r.rn is not None)}/6 prices")
@@ -387,6 +431,10 @@ def scrape_transip() -> dict[str, PriceRow]:
         prices_renew = find_prices_near(html, "verleng", 300) + find_prices_near(html, "regulier", 300)
         rn = max(prices_renew) if prices_renew else None
 
+        # Range-check (vangt o.a. .ai €4 wegens niet-gerelateerd prijsje op page)
+        fy = validate_price(fy, ext)
+        rn = validate_price(rn, ext)
+
         log(f"  TransIP {ext}: fy={fy} rn={rn}")
         out[ext] = PriceRow("TransIP", ext, fy, rn, url, True)
     return out
@@ -443,9 +491,19 @@ def scrape_vimexx() -> dict[str, PriceRow]:
                     prices.append(v)
             except ValueError:
                 pass
-        fy = rn = min(prices) if prices else None
-        log(f"  Vimexx {ext}: fy={fy} rn={rn}")
+        raw_min = min(prices) if prices else None
+        fy = validate_price(raw_min, ext)
+        rn = fy  # Vimexx hanteert vlakke prijzen
+        log(f"  Vimexx {ext}: fy={fy} rn={rn} (raw {raw_min})")
         out[ext] = PriceRow("Vimexx", ext, fy, rn, url, False)
+
+    # Anti-uniform check: als 4+ extensies dezelfde fy hebben, is dat waarschijnlijk
+    # een "vanaf"-prijs die ten onrechte op iedereen plakte. Wis behalve eerste.
+    fy_values = [out[e].fy for e in EXTENSIONS if out[e].fy is not None]
+    if len(fy_values) >= 4 and len(set(fy_values)) == 1:
+        log(f"  Vimexx: uniform fy={fy_values[0]} detected over {len(fy_values)} ext — clearing all (LLM zal opvullen)")
+        for e in EXTENSIONS:
+            out[e] = PriceRow("Vimexx", e, None, None, url, False)
     return out
 
 
@@ -474,12 +532,32 @@ def scrape_yourhosting() -> dict[str, PriceRow]:
 
 
 def scrape_hostnet() -> dict[str, PriceRow]:
+    """Hostnet's tabel heeft kolommen [Extensie | Reguliere prijs | Actieprijs] of
+    omgekeerd. We detecteren via header welke kolom 'actie' (first year) is en
+    welke 'verlenging/regulier' (renewal)."""
     url = "https://www.hostnet.nl/prijzen-domeinnamen"
     out = {e: PriceRow("Hostnet", e, None, None, url, True) for e in EXTENSIONS}
     html = fetch(url)
     if not html:
         return out
     soup = BeautifulSoup(html, "html.parser")
+
+    # Stap 1: vind header-row om kolom-volgorde te bepalen
+    action_col = None  # index van de "actie"-kolom (first year)
+    renewal_col = None  # index van de "verlenging/regulier"-kolom
+    for tr in soup.find_all("tr"):
+        headers = [c.get_text(" ", strip=True).lower() for c in tr.find_all(["th"])]
+        if not headers:
+            continue
+        for i, h in enumerate(headers):
+            if any(k in h for k in ["actie", "aanbieding", "kortings", "eerste jaar"]):
+                action_col = i
+            elif any(k in h for k in ["regulier", "verleng", "normaal", "jaar 2", "v.a. jaar"]):
+                renewal_col = i
+        if action_col is not None or renewal_col is not None:
+            break
+
+    # Stap 2: lees data-rows
     for tr in soup.find_all("tr"):
         cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
         if not cells:
@@ -487,39 +565,42 @@ def scrape_hostnet() -> dict[str, PriceRow]:
         first = cells[0].lower().strip()
         for ext in EXTENSIONS:
             if first == ext or first == ext.lstrip("."):
-                prices = [p for p in (parse_price(c) for c in cells[1:]) if p is not None]
-                if prices:
-                    fy = min(prices)
-                    rn = max(prices) if len(prices) > 1 and max(prices) != fy else None
-                    log(f"  Hostnet {ext}: fy={fy} rn={rn}")
-                    out[ext] = PriceRow("Hostnet", ext, fy, rn, url, True)
+                fy = rn = None
+                if action_col is not None and action_col < len(cells):
+                    fy = validate_price(parse_price(cells[action_col]), ext)
+                if renewal_col is not None and renewal_col < len(cells):
+                    rn = validate_price(parse_price(cells[renewal_col]), ext)
+                # Fallback bij ontbrekende headers: aanname dat 1e prijs = actie
+                if fy is None and rn is None:
+                    prices = [p for p in (parse_price(c) for c in cells[1:]) if p is not None]
+                    if prices:
+                        fy = validate_price(min(prices), ext)
+                        rn = validate_price(max(prices) if len(prices) > 1 and max(prices) != fy else None, ext)
+                log(f"  Hostnet {ext}: fy={fy} rn={rn} (cols actie={action_col}, verleng={renewal_col})")
+                out[ext] = PriceRow("Hostnet", ext, fy, rn, url, True)
                 break
     return out
 
 
 def scrape_godaddy() -> dict[str, PriceRow]:
-    out: dict[str, PriceRow] = {}
-    ext_map = {".nl": "nl-domein", ".com": "com-domein", ".eu": "eu-domein",
-               ".be": "be-domein", ".org": "org-domein", ".ai": "ai-domein"}
-    for ext, slug in ext_map.items():
-        url = f"https://www.godaddy.com/nl/tlds/{slug}"
-        html = fetch(url, use_browser=True)
-        if not html:
-            out[ext] = PriceRow("GoDaddy", ext, None, None, url, True)
-            continue
-        prices = []
-        for pm in PRICE_RX.finditer(html):
-            raw = pm.group(1) or pm.group(2)
-            raw = raw.replace(".", "").replace(",", ".") if raw.count(",") == 1 else raw.replace(",", "")
-            try:
-                v = round(float(raw), 2)
-                if 0.01 <= v <= 200:
-                    prices.append(v)
-            except ValueError:
-                pass
+    """GoDaddy laadt prijzen lazily op TLD-pagina's. We proberen eerst de
+    'goedkope-domeinnamen' overzichtspagina (alle prijzen in één lijst), en
+    laten de LLM-fallback de rest doen voor wat we niet kunnen parsen."""
+    url = "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen"
+    out = {e: PriceRow("GoDaddy", e, None, None, url, True) for e in EXTENSIONS}
+    html = fetch(url, use_browser=True)
+    if not html:
+        return out
+    soup = BeautifulSoup(html, "html.parser")
+    text = soup.get_text(" ", strip=True)
+    for ext in EXTENSIONS:
+        # Zoek prijzen direct na de extensie-mention (binnen 150 chars)
+        prices = find_prices_near(text, ext, 150)
+        # Filter op realistisch bereik per extensie
+        prices = [p for p in prices if validate_price(p, ext) is not None]
         fy = min(prices) if prices else None
-        rn = max(prices) if len(prices) > 1 and max(prices) != fy else None
-        log(f"  GoDaddy {ext}: fy={fy} rn={rn} ({len(prices)} candidates)")
+        rn = None  # GoDaddy verlengingsprijzen vereisen kliks; laten we LLM doen
+        log(f"  GoDaddy {ext}: fy={fy} ({len(prices)} candidates in range)")
         out[ext] = PriceRow("GoDaddy", ext, fy, rn, url, True)
     return out
 
