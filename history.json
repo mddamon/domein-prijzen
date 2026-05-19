@@ -331,7 +331,7 @@
         {
           "r": "Mijndomein",
           "e": ".nl",
-          "fy": null,
+          "fy": 1,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -339,7 +339,7 @@
         {
           "r": "Mijndomein",
           "e": ".com",
-          "fy": null,
+          "fy": 12,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -347,7 +347,7 @@
         {
           "r": "Mijndomein",
           "e": ".eu",
-          "fy": null,
+          "fy": 1,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -355,7 +355,7 @@
         {
           "r": "Mijndomein",
           "e": ".be",
-          "fy": null,
+          "fy": 1,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -363,7 +363,7 @@
         {
           "r": "Mijndomein",
           "e": ".org",
-          "fy": null,
+          "fy": 6,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -374,7 +374,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
-          "incl_vat": true
+          "incl_vat": null
         },
         {
           "r": "TransIP",
