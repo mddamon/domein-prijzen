@@ -331,7 +331,7 @@
         {
           "r": "Mijndomein",
           "e": ".nl",
-          "fy": 0.01,
+          "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
           "incl_vat": true
@@ -374,7 +374,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "TransIP",
@@ -534,7 +534,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "Yourhosting",
@@ -542,7 +542,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "Yourhosting",
@@ -550,7 +550,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "Yourhosting",
@@ -558,7 +558,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "Yourhosting",
@@ -566,7 +566,7 @@
           "fy": null,
           "rn": null,
           "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
-          "incl_vat": null
+          "incl_vat": true
         },
         {
           "r": "Hostnet",

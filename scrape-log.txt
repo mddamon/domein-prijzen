@@ -4,9 +4,10 @@ LLM fallback: enabled
 
 
 [Mijndomein]
-    vision: 1/6 prices for Mijndomein
-  primary found 1/6 prices, trying LLM fallback...
+    vision error: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'messages.0.content.0.image.source.base64.data: At least one of the image dimensions exceed max allowed size: 8000 pixels'}, 'request_id': 'req_011CbC3FLm3SQDxLLAGwutFt'}
+  primary found 0/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
+  ! Mijndomein: 0 prices extracted — parser may need updating
 
 [TransIP]
   TransIP .nl: fy=0.49 rn=None
@@ -36,8 +37,8 @@ LLM fallback: enabled
   LLM extracted 5/6 prices
 
 [Yourhosting]
-    screenshot_form: filled 'input[placeholder*='omein' i]'
-    vision: 0/6 prices for Yourhosting
+    screenshot_form: no input at https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/
+  Yourhosting: screenshot failed
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 1/6 prices
 
@@ -66,4 +67,4 @@ LLM fallback: enabled
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 2 run(s). ===
+=== Done. 23/48 cells filled. History: 2 run(s). ===
