@@ -125,11 +125,92 @@ def get_playwright_browser():
     try:
         from playwright.sync_api import sync_playwright
         pw = sync_playwright().start()
-        _playwright_browser = pw.chromium.launch(headless=True)
+        # Launch met argumenten die bot-detectie verminderen
+        _playwright_browser = pw.chromium.launch(
+            headless=True,
+            args=[
+                "--disable-blink-features=AutomationControlled",
+                "--disable-features=IsolateOrigins,site-per-process",
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-web-security",
+                "--lang=nl-NL",
+            ],
+        )
         return _playwright_browser
     except Exception as e:
         log(f"  Playwright init failed: {e}")
         return None
+
+
+def _apply_stealth(page) -> None:
+    """Pas playwright-stealth patches toe op de page (verbergt navigator.webdriver,
+    fixt chrome.runtime, plugins-array, etc.)."""
+    try:
+        from playwright_stealth import Stealth
+        Stealth().apply_stealth_sync(page)
+    except ImportError:
+        # Fallback: handmatige stealth-patches via init script
+        page.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            window.chrome = { runtime: {} };
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [{ name: 'Chrome PDF Viewer' }, { name: 'Native Client' }]
+            });
+            Object.defineProperty(navigator, 'languages', { get: () => ['nl-NL', 'nl', 'en'] });
+        """)
+    except Exception as e:
+        log(f"    stealth apply error (continuing): {e}")
+
+
+def _human_like_behavior(page, steps: int = 3) -> None:
+    """Voer wat menselijke interacties uit: scroll, korte pauzes, muis-bewegingen."""
+    import random
+    try:
+        for _ in range(steps):
+            x = random.randint(100, 1200)
+            y = random.randint(200, 800)
+            page.mouse.move(x, y, steps=random.randint(5, 15))
+            page.wait_for_timeout(random.randint(200, 600))
+        # Scroll een beetje
+        page.mouse.wheel(0, random.randint(200, 600))
+        page.wait_for_timeout(random.randint(400, 900))
+        page.mouse.wheel(0, random.randint(-300, -100))
+        page.wait_for_timeout(random.randint(200, 500))
+    except Exception:
+        pass
+
+
+def _new_stealth_context(browser, viewport_width: int = 1400, viewport_height: int = 1800):
+    """Maak een nieuwe browser context met realistische instellingen."""
+    import random
+    # Lichte randomisatie van viewport om uniciteit te vermijden
+    vw = viewport_width + random.randint(-40, 40)
+    vh = viewport_height + random.randint(-40, 40)
+    context = browser.new_context(
+        user_agent=USER_AGENT,
+        locale="nl-NL",
+        timezone_id="Europe/Amsterdam",
+        viewport={"width": vw, "height": vh},
+        screen={"width": vw, "height": vh},
+        device_scale_factor=2,
+        is_mobile=False,
+        has_touch=False,
+        java_script_enabled=True,
+        ignore_https_errors=False,
+        extra_http_headers={
+            "Accept-Language": "nl-NL,nl;q=0.9,en;q=0.5",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+            "Sec-Ch-Ua": '"Chromium";v="120", "Not_A Brand";v="8"',
+            "Sec-Ch-Ua-Platform": '"macOS"',
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "none",
+            "Sec-Fetch-User": "?1",
+            "Upgrade-Insecure-Requests": "1",
+        },
+    )
+    return context
 
 
 def fetch_rendered(url: str) -> Optional[str]:
@@ -137,13 +218,15 @@ def fetch_rendered(url: str) -> Optional[str]:
     if not browser:
         return fetch_http(url)
     try:
-        context = browser.new_context(user_agent=USER_AGENT, locale="nl-NL")
+        context = _new_stealth_context(browser)
         page = context.new_page()
+        _apply_stealth(page)
         page.goto(url, timeout=25000, wait_until="domcontentloaded")
         try:
             page.wait_for_load_state("networkidle", timeout=4000)
         except Exception:
             pass
+        _human_like_behavior(page, steps=2)
         # Probeer cookie-banners weg te klikken (zo blijven prijzen niet verstopt).
         for selector in ['button:has-text("Akkoord")', 'button:has-text("Accepteer")',
                          'button:has-text("Accept all")', 'button:has-text("Toestaan")']:
@@ -167,17 +250,15 @@ def fetch(url: str, use_browser: bool = False) -> Optional[str]:
     return fetch_http(url)
 
 
-def screenshot_via_url(url: str, wait_ms: int = 6000) -> Optional[bytes]:
-    """Open URL met Playwright, wacht voor JS-render, neem full-page screenshot."""
+def screenshot_via_url(url: str, wait_ms: int = 8000) -> Optional[bytes]:
+    """Open URL met stealth-Playwright, wacht voor JS-render, neem full-page screenshot."""
     browser = get_playwright_browser()
     if not browser:
         return None
     try:
-        context = browser.new_context(
-            user_agent=USER_AGENT, locale="nl-NL",
-            viewport={"width": 1400, "height": 1800}
-        )
+        context = _new_stealth_context(browser)
         page = context.new_page()
+        _apply_stealth(page)
         page.goto(url, timeout=30000, wait_until="domcontentloaded")
         try:
             page.wait_for_load_state("networkidle", timeout=wait_ms)
@@ -190,7 +271,8 @@ def screenshot_via_url(url: str, wait_ms: int = 6000) -> Optional[bytes]:
                 break
             except Exception:
                 pass
-        page.wait_for_timeout(2000)
+        _human_like_behavior(page, steps=4)
+        page.wait_for_timeout(3000)
         img = page.screenshot(full_page=True, type="png")
         context.close()
         time.sleep(INTER_REQUEST_DELAY)
@@ -204,9 +286,9 @@ def screenshot_via_form_checker(
     checker_url: str,
     test_domain: str,
     input_selectors: Optional[list[str]] = None,
-    wait_after_submit_ms: int = 6000,
+    wait_after_submit_ms: int = 8000,
 ) -> Optional[bytes]:
-    """Open checker, typ domein, submit, wacht en screenshot het resultaat."""
+    """Stealth-Playwright: open checker, typ domein menselijk, submit, screenshot."""
     if input_selectors is None:
         input_selectors = [
             "input[placeholder*='omein' i]", "input[placeholder*='omain' i]",
@@ -218,29 +300,33 @@ def screenshot_via_form_checker(
     if not browser:
         return None
     try:
-        context = browser.new_context(
-            user_agent=USER_AGENT, locale="nl-NL",
-            viewport={"width": 1400, "height": 1800}
-        )
+        context = _new_stealth_context(browser)
         page = context.new_page()
+        _apply_stealth(page)
         page.goto(checker_url, timeout=25000, wait_until="domcontentloaded")
         try:
-            page.wait_for_load_state("networkidle", timeout=3000)
+            page.wait_for_load_state("networkidle", timeout=4000)
         except Exception:
             pass
         for sel in ['button:has-text("Akkoord")', 'button:has-text("Accepteer")',
                     'button:has-text("Accept all")', 'button:has-text("Toestaan")']:
             try:
-                page.locator(sel).first.click(timeout=400)
+                page.locator(sel).first.click(timeout=500)
                 break
             except Exception:
                 pass
+        _human_like_behavior(page, steps=2)
         filled = False
         for sel in input_selectors:
             try:
                 loc = page.locator(sel).first
-                loc.wait_for(timeout=1500)
-                loc.fill(test_domain)
+                loc.wait_for(timeout=2000)
+                loc.click()
+                # Type karakter voor karakter om menselijk gedrag te simuleren
+                import random
+                for ch in test_domain:
+                    loc.type(ch, delay=random.randint(60, 180))
+                page.wait_for_timeout(random.randint(500, 1200))
                 loc.press("Enter")
                 filled = True
                 log(f"    screenshot_form: filled '{sel}'")
@@ -255,7 +341,8 @@ def screenshot_via_form_checker(
             page.wait_for_load_state("networkidle", timeout=wait_after_submit_ms)
         except Exception:
             pass
-        page.wait_for_timeout(3000)
+        page.wait_for_timeout(4000)
+        _human_like_behavior(page, steps=2)
         img = page.screenshot(full_page=True, type="png")
         context.close()
         time.sleep(INTER_REQUEST_DELAY)
@@ -365,8 +452,9 @@ def fetch_via_form_checker(
     if not browser:
         return None
     try:
-        context = browser.new_context(user_agent=USER_AGENT, locale="nl-NL")
+        context = _new_stealth_context(browser)
         page = context.new_page()
+        _apply_stealth(page)
         page.goto(checker_url, timeout=25000, wait_until="domcontentloaded")
         try:
             page.wait_for_load_state("networkidle", timeout=3000)
