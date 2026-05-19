@@ -167,6 +167,181 @@ def fetch(url: str, use_browser: bool = False) -> Optional[str]:
     return fetch_http(url)
 
 
+def screenshot_via_url(url: str, wait_ms: int = 6000) -> Optional[bytes]:
+    """Open URL met Playwright, wacht voor JS-render, neem full-page screenshot."""
+    browser = get_playwright_browser()
+    if not browser:
+        return None
+    try:
+        context = browser.new_context(
+            user_agent=USER_AGENT, locale="nl-NL",
+            viewport={"width": 1400, "height": 1800}
+        )
+        page = context.new_page()
+        page.goto(url, timeout=30000, wait_until="domcontentloaded")
+        try:
+            page.wait_for_load_state("networkidle", timeout=wait_ms)
+        except Exception:
+            pass
+        for sel in ['button:has-text("Akkoord")', 'button:has-text("Accepteer")',
+                    'button:has-text("Accept all")', 'button:has-text("Toestaan")']:
+            try:
+                page.locator(sel).first.click(timeout=400)
+                break
+            except Exception:
+                pass
+        page.wait_for_timeout(2000)
+        img = page.screenshot(full_page=True, type="png")
+        context.close()
+        time.sleep(INTER_REQUEST_DELAY)
+        return img
+    except Exception as e:
+        log(f"    screenshot_via_url error: {e}")
+        return None
+
+
+def screenshot_via_form_checker(
+    checker_url: str,
+    test_domain: str,
+    input_selectors: Optional[list[str]] = None,
+    wait_after_submit_ms: int = 6000,
+) -> Optional[bytes]:
+    """Open checker, typ domein, submit, wacht en screenshot het resultaat."""
+    if input_selectors is None:
+        input_selectors = [
+            "input[placeholder*='omein' i]", "input[placeholder*='omain' i]",
+            "input[type='search']", "input[name*='domain' i]",
+            "input[name*='omein' i]", "input.search", "input.domain-search",
+            "form input[type='text']",
+        ]
+    browser = get_playwright_browser()
+    if not browser:
+        return None
+    try:
+        context = browser.new_context(
+            user_agent=USER_AGENT, locale="nl-NL",
+            viewport={"width": 1400, "height": 1800}
+        )
+        page = context.new_page()
+        page.goto(checker_url, timeout=25000, wait_until="domcontentloaded")
+        try:
+            page.wait_for_load_state("networkidle", timeout=3000)
+        except Exception:
+            pass
+        for sel in ['button:has-text("Akkoord")', 'button:has-text("Accepteer")',
+                    'button:has-text("Accept all")', 'button:has-text("Toestaan")']:
+            try:
+                page.locator(sel).first.click(timeout=400)
+                break
+            except Exception:
+                pass
+        filled = False
+        for sel in input_selectors:
+            try:
+                loc = page.locator(sel).first
+                loc.wait_for(timeout=1500)
+                loc.fill(test_domain)
+                loc.press("Enter")
+                filled = True
+                log(f"    screenshot_form: filled '{sel}'")
+                break
+            except Exception:
+                continue
+        if not filled:
+            log(f"    screenshot_form: no input at {checker_url}")
+            context.close()
+            return None
+        try:
+            page.wait_for_load_state("networkidle", timeout=wait_after_submit_ms)
+        except Exception:
+            pass
+        page.wait_for_timeout(3000)
+        img = page.screenshot(full_page=True, type="png")
+        context.close()
+        time.sleep(INTER_REQUEST_DELAY)
+        return img
+    except Exception as e:
+        log(f"    screenshot_form error: {e}")
+        return None
+
+
+def vision_extract_prices(
+    image_bytes: bytes,
+    registrar: str,
+    test_domain: str,
+    url: str,
+) -> dict[str, "PriceRow"]:
+    """Stuur screenshot naar Claude Haiku (vision) om prijzen per extensie te lezen."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        log("    vision: no ANTHROPIC_API_KEY")
+        return {}
+    try:
+        import anthropic
+        import base64
+    except ImportError:
+        return {}
+
+    img_b64 = base64.standard_b64encode(image_bytes).decode("utf-8")
+    prompt = f"""Dit is een screenshot van een domeinchecker bij {registrar} na zoekopdracht "{test_domain}".
+
+Lees uit de visueel zichtbare prijzen voor "{test_domain}.{{ext}}" voor deze extensies:
+.nl, .com, .eu, .be, .org, .ai
+
+Per extensie:
+- first_year: aanbiedingsprijs eerste jaar in EUR (vaak prominent/vetgedrukt)
+- renewal: reguliere/verlengingsprijs (vaak doorgestreept of in kleinere tekst)
+- incl_vat: true/false/null
+
+Strikte regels:
+- Alleen prijzen die DUIDELIJK bij de extensie staan op de schermafbeelding.
+- Andere TLDs (.pw, .shop, .store, .online, etc.) negeren.
+- USD → null.
+- Range-checks: .nl €0,01-25, .com €0,50-35, .eu €0,50-35, .be €0,50-35, .org €1-40, .ai €30-200.
+- Bij twijfel: null. Geen prijzen verzinnen.
+
+Antwoord ALLEEN met deze JSON:
+{{".nl":{{"first_year":null,"renewal":null,"incl_vat":null}},".com":{{"first_year":null,"renewal":null,"incl_vat":null}},".eu":{{"first_year":null,"renewal":null,"incl_vat":null}},".be":{{"first_year":null,"renewal":null,"incl_vat":null}},".org":{{"first_year":null,"renewal":null,"incl_vat":null}},".ai":{{"first_year":null,"renewal":null,"incl_vat":null}}}}"""
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model=LLM_MODEL,
+            max_tokens=600,
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "image", "source": {
+                        "type": "base64", "media_type": "image/png", "data": img_b64
+                    }},
+                    {"type": "text", "text": prompt}
+                ]
+            }],
+        )
+        response = msg.content[0].text.strip()
+        match = re.search(r"\{.*\}", response, re.DOTALL)
+        if not match:
+            log(f"    vision: no JSON in response: {response[:200]}")
+            return {}
+        data = json.loads(match.group())
+        out: dict[str, PriceRow] = {}
+        for ext, prices in data.items():
+            if ext not in EXTENSIONS:
+                continue
+            if not isinstance(prices, dict):
+                continue
+            fy = validate_price(prices.get("first_year"), ext)
+            rn = validate_price(prices.get("renewal"), ext)
+            incl = prices.get("incl_vat")
+            out[ext] = PriceRow(registrar, ext, fy, rn, url, incl)
+        filled = sum(1 for r in out.values() if r.fy is not None or r.rn is not None)
+        log(f"    vision: {filled}/6 prices for {registrar}")
+        return out
+    except Exception as e:
+        log(f"    vision error: {e}")
+        return {}
+
+
 def fetch_via_form_checker(
     checker_url: str,
     test_domain: str,
@@ -299,6 +474,8 @@ CHECKER-PAGINA TEKST:
         out: dict[str, PriceRow] = {}
         for ext, prices in data.items():
             if ext not in EXTENSIONS:
+                continue
+            if not isinstance(prices, dict):  # LLM kan None of string teruggeven
                 continue
             fy = validate_price(prices.get("first_year"), ext)
             rn = validate_price(prices.get("renewal"), ext)
@@ -508,18 +685,18 @@ def filled_count(rows: dict[str, PriceRow]) -> int:
 
 
 def scrape_mijndomein() -> dict[str, PriceRow]:
-    """Hit de Mijndomein checker direct via URL param; stuur resultaat naar LLM."""
+    """Screenshot van de Mijndomein checker, dan Claude Vision."""
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
     url = f"https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam={test_domain}"
     out = {e: PriceRow("Mijndomein", e, None, None, url, True) for e in EXTENSIONS}
-    html = fetch(url, use_browser=True)
-    if not html:
-        log("  Mijndomein: checker not loaded")
+    img = screenshot_via_url(url)
+    if not img:
+        log("  Mijndomein: screenshot failed")
         return out
-    llm_out = llm_extract_checker_results(html, "Mijndomein", test_domain, url)
+    vision_out = vision_extract_prices(img, "Mijndomein", test_domain, url)
     for ext in EXTENSIONS:
-        if ext in llm_out:
-            out[ext] = llm_out[ext]
+        if ext in vision_out:
+            out[ext] = vision_out[ext]
     return out
 
 
@@ -630,18 +807,18 @@ def scrape_vimexx() -> dict[str, PriceRow]:
 
 
 def scrape_yourhosting() -> dict[str, PriceRow]:
-    """Yourhosting toont per-extensie prijzen pas na zoek-interactie."""
+    """Form-checker → screenshot → Claude Vision."""
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
     checker_url = "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/"
     out = {e: PriceRow("Yourhosting", e, None, None, checker_url, True) for e in EXTENSIONS}
-    html = fetch_via_form_checker(checker_url, test_domain)
-    if not html:
-        log("  Yourhosting: checker did not return HTML")
+    img = screenshot_via_form_checker(checker_url, test_domain)
+    if not img:
+        log("  Yourhosting: screenshot failed")
         return out
-    llm_out = llm_extract_checker_results(html, "Yourhosting", test_domain, checker_url)
+    vision_out = vision_extract_prices(img, "Yourhosting", test_domain, checker_url)
     for ext in EXTENSIONS:
-        if ext in llm_out:
-            out[ext] = llm_out[ext]
+        if ext in vision_out:
+            out[ext] = vision_out[ext]
     return out
 
 
@@ -699,18 +876,18 @@ def scrape_hostnet() -> dict[str, PriceRow]:
 
 
 def scrape_godaddy() -> dict[str, PriceRow]:
-    """GoDaddy toont prijzen alleen na zoek-interactie. Form-checker."""
+    """Form-checker → screenshot → Claude Vision."""
     test_domain = "trackercheck" + str(date.today()).replace("-", "")
-    checker_url = "https://www.godaddy.com/nl/domeinen"
+    checker_url = "https://www.godaddy.com/nl"
     out = {e: PriceRow("GoDaddy", e, None, None, checker_url, True) for e in EXTENSIONS}
-    html = fetch_via_form_checker(checker_url, test_domain)
-    if not html:
-        log("  GoDaddy: checker did not return HTML")
+    img = screenshot_via_form_checker(checker_url, test_domain)
+    if not img:
+        log("  GoDaddy: screenshot failed")
         return out
-    llm_out = llm_extract_checker_results(html, "GoDaddy", test_domain, checker_url)
+    vision_out = vision_extract_prices(img, "GoDaddy", test_domain, checker_url)
     for ext in EXTENSIONS:
-        if ext in llm_out:
-            out[ext] = llm_out[ext]
+        if ext in vision_out:
+            out[ext] = vision_out[ext]
     return out
 
 
