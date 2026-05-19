@@ -167,6 +167,151 @@ def fetch(url: str, use_browser: bool = False) -> Optional[str]:
     return fetch_http(url)
 
 
+def fetch_via_form_checker(
+    checker_url: str,
+    test_domain: str,
+    input_selectors: Optional[list[str]] = None,
+    wait_after_submit_ms: int = 5000,
+) -> Optional[str]:
+    """Open checker page, typ test_domain in zoekveld, druk Enter, wacht op resultaat.
+    Geeft de gerenderde HTML terug nadat de resultaten zijn geladen."""
+    if input_selectors is None:
+        input_selectors = [
+            "input[placeholder*='omein' i]",       # 'domein'/'domain' (case-i)
+            "input[placeholder*='omain' i]",
+            "input[type='search']",
+            "input[name*='domain' i]",
+            "input[name*='omein' i]",
+            "input.search",
+            "input.domain-search",
+            "form input[type='text']",
+        ]
+    browser = get_playwright_browser()
+    if not browser:
+        return None
+    try:
+        context = browser.new_context(user_agent=USER_AGENT, locale="nl-NL")
+        page = context.new_page()
+        page.goto(checker_url, timeout=25000, wait_until="domcontentloaded")
+        try:
+            page.wait_for_load_state("networkidle", timeout=3000)
+        except Exception:
+            pass
+        # Cookie banners weg
+        for sel in ['button:has-text("Akkoord")', 'button:has-text("Accepteer")',
+                    'button:has-text("Accept all")', 'button:has-text("Toestaan")',
+                    'button:has-text("Sta toe")']:
+            try:
+                page.locator(sel).first.click(timeout=400)
+                break
+            except Exception:
+                pass
+        # Vind inputveld
+        filled = False
+        for sel in input_selectors:
+            try:
+                loc = page.locator(sel).first
+                loc.wait_for(timeout=1500)
+                loc.fill(test_domain)
+                loc.press("Enter")
+                filled = True
+                log(f"    form_checker: filled selector '{sel}'")
+                break
+            except Exception:
+                continue
+        if not filled:
+            log(f"    form_checker: no input found at {checker_url}")
+            context.close()
+            return None
+        try:
+            page.wait_for_load_state("networkidle", timeout=wait_after_submit_ms)
+        except Exception:
+            pass
+        page.wait_for_timeout(2000)  # extra wachten op async content
+        html = page.content()
+        context.close()
+        time.sleep(INTER_REQUEST_DELAY)
+        return html
+    except Exception as e:
+        log(f"    form_checker error: {e}")
+        return None
+
+
+def llm_extract_checker_results(
+    html: str,
+    registrar: str,
+    test_domain: str,
+    url: str,
+) -> dict[str, "PriceRow"]:
+    """Stuur checker-resultaat HTML naar Claude Haiku met expliciete prompt
+    om prijzen te vinden voor {test_domain}.{ext}."""
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        return {}
+    try:
+        import anthropic
+    except ImportError:
+        return {}
+
+    soup = BeautifulSoup(html, "html.parser")
+    for tag in soup(["script", "style", "noscript", "svg"]):
+        tag.decompose()
+    text = soup.get_text("\n", strip=True)[:18000]
+
+    prompt = f"""Je krijgt het HTML-resultaat van een domeinchecker bij {registrar}.
+Iemand heeft de naam "{test_domain}" gezocht; de pagina toont nu prijzen per extensie.
+
+Vind voor ELK van deze extensies de prijs voor "{test_domain}.{{ext}}":
+- .nl, .com, .eu, .be, .org, .ai
+
+Per extensie wil ik:
+- first_year: aanbiedingsprijs eerste jaar in EUR (vaak vetgedrukt of prominent)
+- renewal: reguliere prijs / verlengingsprijs (vaak doorgestreept of in fine print)
+- incl_vat: true / false / null
+
+KRITIEKE REGELS:
+- Het anker is "{test_domain}.{{ext}}". Als die niet voorkomt in de tekst, gebruik null voor die extensie.
+- Verschillende registrars tonen prijzen anders: soms regulier eerst dan actie, soms andersom. Pak de LAAGSTE als first_year, de HOOGSTE als renewal — tenzij duidelijk anders.
+- Negeer prijzen voor andere TLDs (bv. .pw, .store, .online, .shop).
+- Range-checks: .nl €0,01–€25, .com €0,50–€35, .eu €0,50–€35, .be €0,50–€35, .org €1–€40, .ai €30–€200.
+- USD → null.
+- Bij twijfel: null. Verzin geen prijzen.
+
+Geef ALLEEN deze JSON, geen uitleg:
+{{".nl":{{"first_year":null,"renewal":null,"incl_vat":null}},".com":{{"first_year":null,"renewal":null,"incl_vat":null}},".eu":{{"first_year":null,"renewal":null,"incl_vat":null}},".be":{{"first_year":null,"renewal":null,"incl_vat":null}},".org":{{"first_year":null,"renewal":null,"incl_vat":null}},".ai":{{"first_year":null,"renewal":null,"incl_vat":null}}}}
+
+CHECKER-PAGINA TEKST:
+{text}"""
+
+    try:
+        client = anthropic.Anthropic(api_key=api_key)
+        msg = client.messages.create(
+            model=LLM_MODEL,
+            max_tokens=600,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        response = msg.content[0].text.strip()
+        match = re.search(r"\{.*\}", response, re.DOTALL)
+        if not match:
+            log(f"    LLM-checker no JSON: {response[:200]}")
+            return {}
+        data = json.loads(match.group())
+        out: dict[str, PriceRow] = {}
+        for ext, prices in data.items():
+            if ext not in EXTENSIONS:
+                continue
+            fy = validate_price(prices.get("first_year"), ext)
+            rn = validate_price(prices.get("renewal"), ext)
+            incl = prices.get("incl_vat")
+            out[ext] = PriceRow(registrar, ext, fy, rn, url, incl)
+        filled = sum(1 for r in out.values() if r.fy is not None or r.rn is not None)
+        log(f"    LLM-checker: {filled}/6 prices for {registrar}")
+        return out
+    except Exception as e:
+        log(f"    LLM-checker error: {e}")
+        return {}
+
+
 # -----------------------------------------------------------------------------
 # Price extraction
 # -----------------------------------------------------------------------------
@@ -363,45 +508,18 @@ def filled_count(rows: dict[str, PriceRow]) -> int:
 
 
 def scrape_mijndomein() -> dict[str, PriceRow]:
-    """Mijndomein toont per-extensie prijzen alleen in de domeinchecker.
-    We hitten de checker direct met een dummy-domein in de querystring."""
-    test_domain = "trackercheck" + str(date.today()).replace("-", "") + "x"
+    """Hit de Mijndomein checker direct via URL param; stuur resultaat naar LLM."""
+    test_domain = "trackercheck" + str(date.today()).replace("-", "")
     url = f"https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam={test_domain}"
     out = {e: PriceRow("Mijndomein", e, None, None, url, True) for e in EXTENSIONS}
-    html = fetch(url, use_browser=True)  # JS-render is nodig
+    html = fetch(url, use_browser=True)
     if not html:
         log("  Mijndomein: checker not loaded")
         return out
-    soup = BeautifulSoup(html, "html.parser")
-    text = soup.get_text("\n", strip=True)
-
-    # Het checker-resultaat toont per extensie een blok met patroon:
-    #   "{test_domain}.{ext}" gevolgd door €REG €ACT
-    # Eerste prijs = regulier (verlenging), tweede = actie eerste jaar.
+    llm_out = llm_extract_checker_results(html, "Mijndomein", test_domain, url)
     for ext in EXTENSIONS:
-        pattern = re.compile(
-            re.escape(test_domain) + re.escape(ext) +
-            r"[\s\S]{0,200}?€\s*(\d{1,3}(?:[.,]\d{2})?)" +
-            r"[\s\S]{0,80}?€?\s*(\d{1,3}(?:[.,]\d{2})?)?",
-            re.IGNORECASE
-        )
-        m = pattern.search(text)
-        if not m:
-            continue
-        try:
-            reg = float(m.group(1).replace(",", "."))
-            act_raw = m.group(2)
-            act = float(act_raw.replace(",", ".")) if act_raw else None
-            rn = validate_price(reg, ext)
-            fy = validate_price(act, ext) if act is not None else None
-            # Sanity: actie moet <= regulier zijn
-            if fy is not None and rn is not None and fy > rn:
-                fy, rn = rn, fy
-            log(f"  Mijndomein {ext}: fy={fy} rn={rn} (checker)")
-            out[ext] = PriceRow("Mijndomein", ext, fy, rn, url, False)  # checker toont ex BTW
-        except (ValueError, AttributeError):
-            pass
-
+        if ext in llm_out:
+            out[ext] = llm_out[ext]
     return out
 
 
@@ -512,26 +630,18 @@ def scrape_vimexx() -> dict[str, PriceRow]:
 
 
 def scrape_yourhosting() -> dict[str, PriceRow]:
-    url = "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
-    out = {e: PriceRow("Yourhosting", e, None, None, url, True) for e in EXTENSIONS}
-    html = fetch(url)
+    """Yourhosting toont per-extensie prijzen pas na zoek-interactie."""
+    test_domain = "trackercheck" + str(date.today()).replace("-", "")
+    checker_url = "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/"
+    out = {e: PriceRow("Yourhosting", e, None, None, checker_url, True) for e in EXTENSIONS}
+    html = fetch_via_form_checker(checker_url, test_domain)
     if not html:
+        log("  Yourhosting: checker did not return HTML")
         return out
-    soup = BeautifulSoup(html, "html.parser")
-    for tr in soup.find_all("tr"):
-        cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
-        if not cells:
-            continue
-        first = cells[0].lower()
-        for ext in EXTENSIONS:
-            if first.strip().lstrip(".") == ext.lstrip("."):
-                prices = [p for p in (parse_price(c) for c in cells[1:]) if p is not None]
-                if prices:
-                    fy = min(prices)
-                    rn = max(prices) if len(prices) > 1 and max(prices) != fy else None
-                    log(f"  Yourhosting {ext}: fy={fy} rn={rn}")
-                    out[ext] = PriceRow("Yourhosting", ext, fy, rn, url, True)
-                break
+    llm_out = llm_extract_checker_results(html, "Yourhosting", test_domain, checker_url)
+    for ext in EXTENSIONS:
+        if ext in llm_out:
+            out[ext] = llm_out[ext]
     return out
 
 
@@ -589,25 +699,18 @@ def scrape_hostnet() -> dict[str, PriceRow]:
 
 
 def scrape_godaddy() -> dict[str, PriceRow]:
-    """GoDaddy laadt prijzen lazily op TLD-pagina's. We proberen eerst de
-    'goedkope-domeinnamen' overzichtspagina (alle prijzen in één lijst), en
-    laten de LLM-fallback de rest doen voor wat we niet kunnen parsen."""
-    url = "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen"
-    out = {e: PriceRow("GoDaddy", e, None, None, url, True) for e in EXTENSIONS}
-    html = fetch(url, use_browser=True)
+    """GoDaddy toont prijzen alleen na zoek-interactie. Form-checker."""
+    test_domain = "trackercheck" + str(date.today()).replace("-", "")
+    checker_url = "https://www.godaddy.com/nl/domeinen"
+    out = {e: PriceRow("GoDaddy", e, None, None, checker_url, True) for e in EXTENSIONS}
+    html = fetch_via_form_checker(checker_url, test_domain)
     if not html:
+        log("  GoDaddy: checker did not return HTML")
         return out
-    soup = BeautifulSoup(html, "html.parser")
-    text = soup.get_text(" ", strip=True)
+    llm_out = llm_extract_checker_results(html, "GoDaddy", test_domain, checker_url)
     for ext in EXTENSIONS:
-        # Zoek prijzen direct na de extensie-mention (binnen 150 chars)
-        prices = find_prices_near(text, ext, 150)
-        # Filter op realistisch bereik per extensie
-        prices = [p for p in prices if validate_price(p, ext) is not None]
-        fy = min(prices) if prices else None
-        rn = None  # GoDaddy verlengingsprijzen vereisen kliks; laten we LLM doen
-        log(f"  GoDaddy {ext}: fy={fy} ({len(prices)} candidates in range)")
-        out[ext] = PriceRow("GoDaddy", ext, fy, rn, url, True)
+        if ext in llm_out:
+            out[ext] = llm_out[ext]
     return out
 
 
