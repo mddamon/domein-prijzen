@@ -363,48 +363,44 @@ def filled_count(rows: dict[str, PriceRow]) -> int:
 
 
 def scrape_mijndomein() -> dict[str, PriceRow]:
-    url = "https://www.mijndomein.nl/producten/domeinnaam"
+    """Mijndomein toont per-extensie prijzen alleen in de domeinchecker.
+    We hitten de checker direct met een dummy-domein in de querystring."""
+    test_domain = "trackercheck" + str(date.today()).replace("-", "") + "x"
+    url = f"https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam={test_domain}"
     out = {e: PriceRow("Mijndomein", e, None, None, url, True) for e in EXTENSIONS}
-    html = fetch(url, use_browser="Mijndomein" in USE_PLAYWRIGHT_FOR)
+    html = fetch(url, use_browser=True)  # JS-render is nodig
     if not html:
-        log("  Mijndomein: page not loaded")
+        log("  Mijndomein: checker not loaded")
         return out
     soup = BeautifulSoup(html, "html.parser")
-    text = soup.get_text(" ", strip=True)
+    text = soup.get_text("\n", strip=True)
 
-    # 1. Tabelrijen
-    for tr in soup.find_all("tr"):
-        cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
-        if not cells:
-            continue
-        first = cells[0].lower().strip().lstrip(".")
-        for ext in EXTENSIONS:
-            if first == ext.lstrip("."):
-                prices = [p for p in (parse_price(c) for c in cells[1:]) if p is not None]
-                if prices:
-                    fy = min(prices)
-                    rn = max(prices) if len(prices) > 1 and max(prices) != fy else None
-                    log(f"  Mijndomein {ext}: fy={fy} rn={rn} (table)")
-                    out[ext] = PriceRow("Mijndomein", ext, fy, rn, url, True)
-                break
-
-    # 2. Proximity fallback (met range-check)
+    # Het checker-resultaat toont per extensie een blok met patroon:
+    #   "{test_domain}.{ext}" gevolgd door €REG €ACT
+    # Eerste prijs = regulier (verlenging), tweede = actie eerste jaar.
     for ext in EXTENSIONS:
-        if out[ext].fy is not None:
+        pattern = re.compile(
+            re.escape(test_domain) + re.escape(ext) +
+            r"[\s\S]{0,200}?€\s*(\d{1,3}(?:[.,]\d{2})?)" +
+            r"[\s\S]{0,80}?€?\s*(\d{1,3}(?:[.,]\d{2})?)?",
+            re.IGNORECASE
+        )
+        m = pattern.search(text)
+        if not m:
             continue
-        prices = find_prices_near(text, ext, 250)
-        if prices:
-            fy = validate_price(min(prices), ext)
-            log(f"  Mijndomein {ext}: fy={fy} (proximity)")
-            out[ext] = PriceRow("Mijndomein", ext, fy, None, url, True)
-
-    # 3. Anti-uniform check: als 4+ extensies dezelfde fy hebben, was het
-    # waarschijnlijk een "vanaf"-prijs die op alles plakte. Wis → LLM neemt over.
-    fy_values = [out[e].fy for e in EXTENSIONS if out[e].fy is not None]
-    if len(fy_values) >= 4 and len(set(fy_values)) == 1:
-        log(f"  Mijndomein: uniform fy={fy_values[0]} over {len(fy_values)} ext — wissen (LLM zal opvullen)")
-        for e in EXTENSIONS:
-            out[e] = PriceRow("Mijndomein", e, None, None, url, True)
+        try:
+            reg = float(m.group(1).replace(",", "."))
+            act_raw = m.group(2)
+            act = float(act_raw.replace(",", ".")) if act_raw else None
+            rn = validate_price(reg, ext)
+            fy = validate_price(act, ext) if act is not None else None
+            # Sanity: actie moet <= regulier zijn
+            if fy is not None and rn is not None and fy > rn:
+                fy, rn = rn, fy
+            log(f"  Mijndomein {ext}: fy={fy} rn={rn} (checker)")
+            out[ext] = PriceRow("Mijndomein", ext, fy, rn, url, False)  # checker toont ex BTW
+        except (ValueError, AttributeError):
+            pass
 
     return out
 
