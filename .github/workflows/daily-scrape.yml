@@ -1,0 +1,44 @@
+name: Daily competitor price scrape
+
+on:
+  schedule:
+    # 05:30 UTC = 06:30 CET (winter) / 07:30 CEST (summer)
+    # GitHub kan een paar minuten vertraagd zijn — geen probleem voor dagprijzen.
+    - cron: "30 5 * * *"
+  workflow_dispatch:  # zet een "Run workflow" knop op de Actions-tab
+
+permissions:
+  contents: write  # nodig om history.json terug te committen
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: python scraper.py
+
+      - name: Commit & push updates
+        run: |
+          git config user.name  "price-bot"
+          git config user.email "price-bot@users.noreply.github.com"
+          git add history.json scrape-log.txt
+          if git diff --cached --quiet; then
+            echo "No changes today."
+          else
+            git commit -m "Daily prices: $(date -u +'%Y-%m-%d')"
+            git push
+          fi
