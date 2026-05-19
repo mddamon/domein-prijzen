@@ -4,6 +4,7 @@ LLM fallback: enabled
 
 
 [Mijndomein]
+    LLM-checker: 0/6 prices for Mijndomein
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
   ! Mijndomein: 0 prices extracted — parser may need updating
@@ -26,16 +27,14 @@ LLM fallback: enabled
   LLM extracted 5/6 prices
 
 [Vimexx]
-  Vimexx .nl: fy=0.48 rn=0.48 (raw 0.48)
-  Vimexx .com: fy=None rn=None (raw 0.48)
-  Vimexx .eu: fy=None rn=None (raw 0.48)
-  Vimexx .be: fy=None rn=None (raw 0.48)
-  Vimexx .org: fy=None rn=None (raw None)
-  Vimexx .ai: fy=None rn=None (raw 0.48)
-  primary found 1/6 prices, trying LLM fallback...
-  LLM extracted 5/6 prices
+  fetch error https://www.vimexx.nl/domeinnaam/domeinnaam-extensies: HTTPSConnectionPool(host='www.vimexx.nl', port=443): Max retries exceeded with url: /domeinnaam/domeinnaam-extensies (Caused by NewConnectionError("HTTPSConnection(host='www.vimexx.nl', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+  primary found 0/6 prices, trying LLM fallback...
+  fetch error https://www.vimexx.nl/domeinnaam/domeinnaam-extensies: HTTPSConnectionPool(host='www.vimexx.nl', port=443): Max retries exceeded with url: /domeinnaam/domeinnaam-extensies (Caused by NewConnectionError("HTTPSConnection(host='www.vimexx.nl', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+  ! Vimexx: 0 prices extracted — parser may need updating
 
 [Yourhosting]
+    form_checker: filled selector 'input[placeholder*='omein' i]'
+    LLM-checker error: 'NoneType' object has no attribute 'get'
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 1/6 prices
 
@@ -52,12 +51,8 @@ LLM fallback: enabled
   Hostnet .org: fy=None rn=32.4 (col-price='32,40')
 
 [GoDaddy]
-  GoDaddy .nl: fy=None (0 candidates in range)
-  GoDaddy .com: fy=None (0 candidates in range)
-  GoDaddy .eu: fy=None (0 candidates in range)
-  GoDaddy .be: fy=None (0 candidates in range)
-  GoDaddy .org: fy=None (0 candidates in range)
-  GoDaddy .ai: fy=None (0 candidates in range)
+    form_checker: no input found at https://www.godaddy.com/nl/domeinen
+  GoDaddy: checker did not return HTML
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
   ! GoDaddy: 0 prices extracted — parser may need updating
@@ -68,4 +63,4 @@ LLM fallback: enabled
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 23/48 cells filled. History: 2 run(s). ===
+=== Done. 18/48 cells filled. History: 2 run(s). ===

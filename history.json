@@ -333,48 +333,48 @@
           "e": ".nl",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "Mijndomein",
           "e": ".com",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "Mijndomein",
           "e": ".eu",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "Mijndomein",
           "e": ".be",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "Mijndomein",
           "e": ".org",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "Mijndomein",
           "e": ".ai",
           "fy": null,
           "rn": null,
-          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519x",
-          "incl_vat": true
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260519",
+          "incl_vat": null
         },
         {
           "r": "TransIP",
@@ -475,26 +475,26 @@
         {
           "r": "Vimexx",
           "e": ".nl",
-          "fy": 0.48,
-          "rn": 0.48,
+          "fy": null,
+          "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
           "incl_vat": false
         },
         {
           "r": "Vimexx",
           "e": ".com",
-          "fy": 7.99,
-          "rn": 23.99,
+          "fy": null,
+          "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": null
+          "incl_vat": false
         },
         {
           "r": "Vimexx",
           "e": ".eu",
-          "fy": 1.75,
-          "rn": 10.99,
+          "fy": null,
+          "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": null
+          "incl_vat": false
         },
         {
           "r": "Vimexx",
@@ -507,18 +507,18 @@
         {
           "r": "Vimexx",
           "e": ".org",
-          "fy": 11.99,
-          "rn": 24.99,
+          "fy": null,
+          "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": null
+          "incl_vat": false
         },
         {
           "r": "Vimexx",
           "e": ".ai",
-          "fy": 79.95,
-          "rn": 149.99,
+          "fy": null,
+          "rn": null,
           "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
-          "incl_vat": null
+          "incl_vat": false
         },
         {
           "r": "Yourhosting",
@@ -533,7 +533,7 @@
           "e": ".com",
           "fy": null,
           "rn": null,
-          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
           "incl_vat": true
         },
         {
@@ -541,7 +541,7 @@
           "e": ".eu",
           "fy": null,
           "rn": null,
-          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
           "incl_vat": true
         },
         {
@@ -549,7 +549,7 @@
           "e": ".be",
           "fy": null,
           "rn": null,
-          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
           "incl_vat": true
         },
         {
@@ -557,7 +557,7 @@
           "e": ".org",
           "fy": null,
           "rn": null,
-          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
           "incl_vat": true
         },
         {
@@ -565,7 +565,7 @@
           "e": ".ai",
           "fy": null,
           "rn": null,
-          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
           "incl_vat": true
         },
         {
@@ -621,7 +621,7 @@
           "e": ".nl",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
@@ -629,7 +629,7 @@
           "e": ".com",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
@@ -637,7 +637,7 @@
           "e": ".eu",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
@@ -645,7 +645,7 @@
           "e": ".be",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
@@ -653,7 +653,7 @@
           "e": ".org",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
@@ -661,7 +661,7 @@
           "e": ".ai",
           "fy": null,
           "rn": null,
-          "u": "https://www.godaddy.com/nl/domeinen/goedkope-domeinnamen",
+          "u": "https://www.godaddy.com/nl/domeinen",
           "incl_vat": true
         },
         {
