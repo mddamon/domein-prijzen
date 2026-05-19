@@ -1,0 +1,60 @@
+=== Run 2026-05-19 ===
+Playwright: enabled
+LLM fallback: enabled
+
+
+[Mijndomein]
+  Mijndomein .nl: fy=0.01 (proximity)
+  Mijndomein .com: fy=0.01 (proximity)
+  Mijndomein .eu: fy=0.01 (proximity)
+  Mijndomein .be: fy=0.01 (proximity)
+
+[TransIP]
+  TransIP .nl: fy=0.49 rn=None
+  TransIP .com: fy=8.99 rn=None
+  TransIP .eu: fy=4.0 rn=None
+  TransIP .be: fy=6.99 rn=None
+  TransIP .org: fy=35.0 rn=None
+  TransIP .ai: fy=4.0 rn=None
+
+[Strato]
+  Strato .nl: fy=0.12 rn=None
+  Strato .com: fy=None rn=None
+  Strato .eu: fy=None rn=None
+  Strato .be: fy=None rn=None
+  Strato .org: fy=None rn=None
+  primary found 1/6 prices, trying LLM fallback...
+  LLM extracted 5/6 prices
+
+[Vimexx]
+  Vimexx .nl: fy=0.48 rn=0.48
+  Vimexx .com: fy=0.48 rn=0.48
+  Vimexx .eu: fy=0.48 rn=0.48
+  Vimexx .be: fy=0.48 rn=0.48
+  Vimexx .org: fy=None rn=None
+  Vimexx .ai: fy=0.48 rn=0.48
+
+[Yourhosting]
+  primary found 0/6 prices, trying LLM fallback...
+  LLM extracted 1/6 prices
+
+[Hostnet]
+  primary found 0/6 prices, trying LLM fallback...
+  LLM extracted 6/6 prices
+
+[GoDaddy]
+  GoDaddy .nl: fy=None rn=None (0 candidates)
+  GoDaddy .com: fy=None rn=None (0 candidates)
+  GoDaddy .eu: fy=None rn=None (0 candidates)
+  GoDaddy .be: fy=None rn=None (0 candidates)
+  GoDaddy .org: fy=None rn=None (0 candidates)
+  GoDaddy .ai: fy=None rn=None (0 candidates)
+  primary found 0/6 prices, trying LLM fallback...
+  LLM extracted 0/6 prices
+  ! GoDaddy: 0 prices extracted — parser may need updating
+
+[Shopify]
+  Shopify .com: fy=4.6
+  Shopify .org: fy=4.6
+
+=== Done. 29/48 cells filled. History: 2 run(s). ===
