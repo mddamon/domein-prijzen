@@ -1,0 +1,327 @@
+{
+  "meta": {
+    "your_brand": "Mijndomein",
+    "competitors": [
+      "TransIP",
+      "Strato",
+      "Vimexx",
+      "Yourhosting",
+      "Hostnet",
+      "GoDaddy",
+      "Shopify"
+    ],
+    "extensions": [
+      ".nl",
+      ".com",
+      ".eu",
+      ".be",
+      ".org",
+      ".ai"
+    ],
+    "currency": "EUR",
+    "default_incl_vat": true,
+    "created": "2026-05-12"
+  },
+  "runs": [
+    {
+      "date": "2026-05-12",
+      "source": "GitHub Actions scraper",
+      "prices": [
+        {
+          "r": "TransIP",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/nl-domein/"
+        },
+        {
+          "r": "TransIP",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/com-domein/"
+        },
+        {
+          "r": "TransIP",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/eu-domein/"
+        },
+        {
+          "r": "TransIP",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/be-domein/"
+        },
+        {
+          "r": "TransIP",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/org-domein/"
+        },
+        {
+          "r": "TransIP",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/ai-domein/"
+        },
+        {
+          "r": "Strato",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/nl-domein-kopen/"
+        },
+        {
+          "r": "Strato",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/com-domein-kopen/"
+        },
+        {
+          "r": "Strato",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/eu-domein-kopen/"
+        },
+        {
+          "r": "Strato",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/be-domein-kopen/"
+        },
+        {
+          "r": "Strato",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/org-domein-kopen/"
+        },
+        {
+          "r": "Strato",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": null
+        },
+        {
+          "r": "Vimexx",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Vimexx",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Vimexx",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Vimexx",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Vimexx",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Vimexx",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "Hostnet",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/nl-domein"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/com-domein"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/eu-domein"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/be-domein"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/org-domein"
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl/tlds/ai-domein"
+        },
+        {
+          "r": "Shopify",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": null
+        },
+        {
+          "r": "Shopify",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.shopify.com/domains/com"
+        },
+        {
+          "r": "Shopify",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": null
+        },
+        {
+          "r": "Shopify",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": null
+        },
+        {
+          "r": "Shopify",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.shopify.com/domains/org"
+        },
+        {
+          "r": "Shopify",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": null
+        }
+      ]
+    }
+  ]
+}
