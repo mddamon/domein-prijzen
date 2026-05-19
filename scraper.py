@@ -388,15 +388,23 @@ def scrape_mijndomein() -> dict[str, PriceRow]:
                     out[ext] = PriceRow("Mijndomein", ext, fy, rn, url, True)
                 break
 
-    # 2. Proximity fallback
+    # 2. Proximity fallback (met range-check)
     for ext in EXTENSIONS:
         if out[ext].fy is not None:
             continue
         prices = find_prices_near(text, ext, 250)
         if prices:
-            fy = min(prices)
+            fy = validate_price(min(prices), ext)
             log(f"  Mijndomein {ext}: fy={fy} (proximity)")
             out[ext] = PriceRow("Mijndomein", ext, fy, None, url, True)
+
+    # 3. Anti-uniform check: als 4+ extensies dezelfde fy hebben, was het
+    # waarschijnlijk een "vanaf"-prijs die op alles plakte. Wis → LLM neemt over.
+    fy_values = [out[e].fy for e in EXTENSIONS if out[e].fy is not None]
+    if len(fy_values) >= 4 and len(set(fy_values)) == 1:
+        log(f"  Mijndomein: uniform fy={fy_values[0]} over {len(fy_values)} ext — wissen (LLM zal opvullen)")
+        for e in EXTENSIONS:
+            out[e] = PriceRow("Mijndomein", e, None, None, url, True)
 
     return out
 
@@ -532,52 +540,54 @@ def scrape_yourhosting() -> dict[str, PriceRow]:
 
 
 def scrape_hostnet() -> dict[str, PriceRow]:
-    """Hostnet's tabel heeft kolommen [Extensie | Reguliere prijs | Actieprijs] of
-    omgekeerd. We detecteren via header welke kolom 'actie' (first year) is en
-    welke 'verlenging/regulier' (renewal)."""
+    """Hostnet gebruikt div-based layout met class 'extension-row'. Elke row heeft
+    .col-extension (TLD) en .col-price (prijzen). Volgorde in col-price:
+    'REGULIER ACTIE' (regulier eerst, actie tweede). Bij slechts één prijs = regulier."""
     url = "https://www.hostnet.nl/prijzen-domeinnamen"
-    out = {e: PriceRow("Hostnet", e, None, None, url, True) for e in EXTENSIONS}
+    out = {e: PriceRow("Hostnet", e, None, None, url, False) for e in EXTENSIONS}  # Hostnet toont ex BTW
     html = fetch(url)
     if not html:
         return out
     soup = BeautifulSoup(html, "html.parser")
 
-    # Stap 1: vind header-row om kolom-volgorde te bepalen
-    action_col = None  # index van de "actie"-kolom (first year)
-    renewal_col = None  # index van de "verlenging/regulier"-kolom
-    for tr in soup.find_all("tr"):
-        headers = [c.get_text(" ", strip=True).lower() for c in tr.find_all(["th"])]
-        if not headers:
+    # Strategie 1: native div-layout
+    for row in soup.select(".extension-row"):
+        ext_el = row.select_one(".col-extension")
+        price_el = row.select_one(".col-price")
+        if not ext_el or not price_el:
             continue
-        for i, h in enumerate(headers):
-            if any(k in h for k in ["actie", "aanbieding", "kortings", "eerste jaar"]):
-                action_col = i
-            elif any(k in h for k in ["regulier", "verleng", "normaal", "jaar 2", "v.a. jaar"]):
-                renewal_col = i
-        if action_col is not None or renewal_col is not None:
-            break
-
-    # Stap 2: lees data-rows
-    for tr in soup.find_all("tr"):
-        cells = [c.get_text(" ", strip=True) for c in tr.find_all(["td", "th"])]
-        if not cells:
-            continue
-        first = cells[0].lower().strip()
+        ext_text = ext_el.get_text(" ", strip=True).lower().strip()
         for ext in EXTENSIONS:
-            if first == ext or first == ext.lstrip("."):
-                fy = rn = None
-                if action_col is not None and action_col < len(cells):
-                    fy = validate_price(parse_price(cells[action_col]), ext)
-                if renewal_col is not None and renewal_col < len(cells):
-                    rn = validate_price(parse_price(cells[renewal_col]), ext)
-                # Fallback bij ontbrekende headers: aanname dat 1e prijs = actie
-                if fy is None and rn is None:
-                    prices = [p for p in (parse_price(c) for c in cells[1:]) if p is not None]
-                    if prices:
-                        fy = validate_price(min(prices), ext)
-                        rn = validate_price(max(prices) if len(prices) > 1 and max(prices) != fy else None, ext)
-                log(f"  Hostnet {ext}: fy={fy} rn={rn} (cols actie={action_col}, verleng={renewal_col})")
-                out[ext] = PriceRow("Hostnet", ext, fy, rn, url, True)
+            if ext_text == ext:
+                # Pak alle prijzen in volgorde uit col-price
+                price_text = price_el.get_text(" ", strip=True)
+                price_matches = []
+                for pm in PRICE_RX.finditer(price_text):
+                    raw = pm.group(1) or pm.group(2)
+                    raw = raw.replace(".", "").replace(",", ".") if raw.count(",") == 1 else raw.replace(",", "")
+                    try:
+                        v = round(float(raw), 2)
+                        price_matches.append(v)
+                    except ValueError:
+                        pass
+                # Ook losse getallen zonder € (komt voor bij Hostnet)
+                if not price_matches:
+                    for m in re.finditer(r"(\d{1,3}(?:[.,]\d{2}))", price_text):
+                        try:
+                            raw = m.group(1).replace(",", ".")
+                            v = round(float(raw), 2)
+                            if 0.01 <= v <= 500:
+                                price_matches.append(v)
+                        except ValueError:
+                            pass
+                # Hostnet-volgorde: [regulier, actie]
+                rn = price_matches[0] if len(price_matches) >= 1 else None
+                fy = price_matches[1] if len(price_matches) >= 2 else None
+                # Als er maar 1 prijs is = regulier (geen actie nu lopend)
+                fy = validate_price(fy, ext)
+                rn = validate_price(rn, ext)
+                log(f"  Hostnet {ext}: fy={fy} rn={rn} (col-price='{price_text[:30]}')")
+                out[ext] = PriceRow("Hostnet", ext, fy, rn, url, False)
                 break
     return out
 
