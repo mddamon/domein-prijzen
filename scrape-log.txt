@@ -1,4 +1,4 @@
-=== Run 2026-05-22 ===
+=== Run 2026-05-23 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -32,7 +32,7 @@ LLM fallback: enabled
   Vimexx .org: fy=None rn=None (raw None)
   Vimexx .ai: fy=None rn=None (raw 0.48)
   primary found 1/6 prices, trying LLM fallback...
-  LLM error: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CbHJdr6XoT4Zoa7xQU28r'}
+  LLM extracted 5/6 prices
 
 [Yourhosting]
     debug saved: yourhosting-landing.{png,html,meta.json}
@@ -63,8 +63,7 @@ Call log:
     screenshot_form: no input at https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/
   Yourhosting: screenshot failed
   primary found 0/6 prices, trying LLM fallback...
-  LLM error: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CbHJqfMT54h26N5WGvoTK'}
-  ! Yourhosting: 0 prices extracted — parser may need updating
+  LLM extracted 1/6 prices
 
 [Hostnet]
   Hostnet .nl: fy=0.1 rn=23.0 (col-price='23,00 0,10')
@@ -107,13 +106,13 @@ Call log:
     screenshot_form: no input at https://www.godaddy.com/nl
   GoDaddy: screenshot failed
   primary found 0/6 prices, trying LLM fallback...
-  LLM error: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CbHJvPVrD49EMr6vmdv3t'}
+  LLM extracted 0/6 prices
   ! GoDaddy: 0 prices extracted — parser may need updating
 
 [Shopify]
   Shopify .com: fy=4.6
   Shopify .org: fy=4.6
   primary found 2/6 prices, trying LLM fallback...
-  LLM error: Error code: 529 - {'type': 'error', 'error': {'type': 'overloaded_error', 'message': 'Overloaded'}, 'request_id': 'req_011CbHJxkH4f8ojTwCxFk1yL'}
+  LLM extracted 0/6 prices
 
-=== Done. 22/48 cells filled. History: 5 run(s). ===
+=== Done. 27/48 cells filled. History: 6 run(s). ===
