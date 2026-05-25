@@ -1,13 +1,11 @@
-=== Run 2026-05-24 ===
+=== Run 2026-05-25 ===
 Playwright: enabled
 LLM fallback: enabled
 
 
 [Mijndomein]
     debug saved: mijndomein.{png,html,meta.json}
-    vision: 3/6 prices for Mijndomein
-  primary found 3/6 prices, trying LLM fallback...
-  LLM extracted 0/6 prices
+    vision: 4/6 prices for Mijndomein
 
 [TransIP]
   TransIP .nl: fy=0.49 rn=None
@@ -27,8 +25,13 @@ LLM fallback: enabled
   LLM extracted 5/6 prices
 
 [Vimexx]
-  fetch error https://www.vimexx.nl/domeinnaam/domeinnaam-extensies: HTTPSConnectionPool(host='www.vimexx.nl', port=443): Read timed out. (read timeout=15)
-  primary found 0/6 prices, trying LLM fallback...
+  Vimexx .nl: fy=0.48 rn=0.48 (raw 0.48)
+  Vimexx .com: fy=None rn=None (raw 0.48)
+  Vimexx .eu: fy=None rn=None (raw 0.48)
+  Vimexx .be: fy=None rn=None (raw 0.48)
+  Vimexx .org: fy=None rn=None (raw None)
+  Vimexx .ai: fy=None rn=None (raw 0.48)
+  primary found 1/6 prices, trying LLM fallback...
   LLM extracted 5/6 prices
 
 [Yourhosting]
@@ -112,4 +115,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 26/48 cells filled. History: 7 run(s). ===
+=== Done. 27/48 cells filled. History: 8 run(s). ===
