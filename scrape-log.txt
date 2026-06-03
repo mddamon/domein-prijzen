@@ -1,11 +1,11 @@
-=== Run 2026-06-02 ===
+=== Run 2026-06-03 ===
 Playwright: enabled
 LLM fallback: enabled
 
 
 [Mijndomein]
     debug saved: mijndomein.{png,html,meta.json}
-    vision: 5/6 prices for Mijndomein
+    vision: 4/6 prices for Mijndomein
 
 [TransIP]
   TransIP .nl: fy=0.49 rn=None
@@ -115,4 +115,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 28/48 cells filled. History: 16 run(s). ===
+=== Done. 27/48 cells filled. History: 17 run(s). ===
