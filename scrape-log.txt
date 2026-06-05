@@ -1,4 +1,4 @@
-=== Run 2026-06-04 ===
+=== Run 2026-06-05 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -115,4 +115,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 27/48 cells filled. History: 18 run(s). ===
+=== Done. 27/48 cells filled. History: 19 run(s). ===
