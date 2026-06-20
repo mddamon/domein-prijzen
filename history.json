@@ -12803,6 +12803,396 @@
           "incl_vat": true
         }
       ]
+    },
+    {
+      "date": "2026-06-20",
+      "source": "GitHub Actions scraper (HTTP + Playwright + LLM-fallback)",
+      "prices": [
+        {
+          "r": "Mijndomein",
+          "e": ".nl",
+          "fy": 0.01,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": true
+        },
+        {
+          "r": "Mijndomein",
+          "e": ".com",
+          "fy": 12,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": true
+        },
+        {
+          "r": "Mijndomein",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": null
+        },
+        {
+          "r": "Mijndomein",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": true
+        },
+        {
+          "r": "Mijndomein",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": true
+        },
+        {
+          "r": "Mijndomein",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.mijndomein.nl/shop/check-domeinnaam?domeinnaam=trackercheck20260620",
+          "incl_vat": null
+        },
+        {
+          "r": "TransIP",
+          "e": ".nl",
+          "fy": 0.49,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/nl-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "TransIP",
+          "e": ".com",
+          "fy": 8.99,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/com-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "TransIP",
+          "e": ".eu",
+          "fy": 4.0,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/eu-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "TransIP",
+          "e": ".be",
+          "fy": 6.99,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/be-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "TransIP",
+          "e": ".org",
+          "fy": 35.0,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/org-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "TransIP",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.transip.nl/domeinnaam/ai-domein/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".nl",
+          "fy": 0.12,
+          "rn": null,
+          "u": "https://www.strato.nl/domeinnaam/nl-domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".com",
+          "fy": 12,
+          "rn": 15,
+          "u": "https://www.strato.nl/domeinnaam/kosten-domeinnaam/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".eu",
+          "fy": 3.6,
+          "rn": 6,
+          "u": "https://www.strato.nl/domeinnaam/kosten-domeinnaam/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".be",
+          "fy": 4.8,
+          "rn": 6,
+          "u": "https://www.strato.nl/domeinnaam/kosten-domeinnaam/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".org",
+          "fy": 9,
+          "rn": 15,
+          "u": "https://www.strato.nl/domeinnaam/kosten-domeinnaam/",
+          "incl_vat": true
+        },
+        {
+          "r": "Strato",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": null,
+          "incl_vat": true
+        },
+        {
+          "r": "Vimexx",
+          "e": ".nl",
+          "fy": 0.48,
+          "rn": 0.48,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": false
+        },
+        {
+          "r": "Vimexx",
+          "e": ".com",
+          "fy": 7.99,
+          "rn": 23.99,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": null
+        },
+        {
+          "r": "Vimexx",
+          "e": ".eu",
+          "fy": 1.75,
+          "rn": 10.99,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": null
+        },
+        {
+          "r": "Vimexx",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": false
+        },
+        {
+          "r": "Vimexx",
+          "e": ".org",
+          "fy": 11.99,
+          "rn": 24.99,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": null
+        },
+        {
+          "r": "Vimexx",
+          "e": ".ai",
+          "fy": 79.95,
+          "rn": 149.99,
+          "u": "https://www.vimexx.nl/domeinnaam/domeinnaam-extensies",
+          "incl_vat": null
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".nl",
+          "fy": 0.1,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/extensies/",
+          "incl_vat": null
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Yourhosting",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/",
+          "incl_vat": true
+        },
+        {
+          "r": "Hostnet",
+          "e": ".nl",
+          "fy": 0.1,
+          "rn": 23.0,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "Hostnet",
+          "e": ".com",
+          "fy": 9.0,
+          "rn": 27.0,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "Hostnet",
+          "e": ".eu",
+          "fy": 5.0,
+          "rn": 26.5,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "Hostnet",
+          "e": ".be",
+          "fy": null,
+          "rn": 26.0,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "Hostnet",
+          "e": ".org",
+          "fy": null,
+          "rn": 32.4,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "Hostnet",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.hostnet.nl/prijzen-domeinnamen",
+          "incl_vat": false
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".com",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".org",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "GoDaddy",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": "https://www.godaddy.com/nl",
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".nl",
+          "fy": null,
+          "rn": null,
+          "u": null,
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".com",
+          "fy": 4.6,
+          "rn": 4.6,
+          "u": "https://www.shopify.com/domains/com",
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".eu",
+          "fy": null,
+          "rn": null,
+          "u": null,
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".be",
+          "fy": null,
+          "rn": null,
+          "u": null,
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".org",
+          "fy": 4.6,
+          "rn": 4.6,
+          "u": "https://www.shopify.com/domains/org",
+          "incl_vat": true
+        },
+        {
+          "r": "Shopify",
+          "e": ".ai",
+          "fy": null,
+          "rn": null,
+          "u": null,
+          "incl_vat": true
+        }
+      ]
     }
   ]
 }
