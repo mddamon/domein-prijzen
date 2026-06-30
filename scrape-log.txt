@@ -1,11 +1,13 @@
-=== Run 2026-06-29 ===
+=== Run 2026-06-30 ===
 Playwright: enabled
 LLM fallback: enabled
 
 
 [Mijndomein]
     debug saved: mijndomein.{png,html,meta.json}
-    vision: 4/6 prices for Mijndomein
+    vision: 0/6 prices for Mijndomein
+  primary found 0/6 prices, trying LLM fallback...
+  LLM extracted 1/6 prices
 
 [TransIP]
   TransIP .nl: fy=0.49 rn=None
@@ -36,32 +38,9 @@ LLM fallback: enabled
 
 [Yourhosting]
     debug saved: yourhosting-landing.{png,html,meta.json}
-    screenshot_form: selector 'input[placeholder*='omein' i]' failed: Locator.click: Timeout 30000ms exceeded.
-Call log:
-  - waiti
-    screenshot_form: selector 'input[placeholder*='omain' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[type='search']' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[name*='domain' i]' failed: Locator.click: Timeout 30000ms exceeded.
-Call log:
-  - waiti
-    screenshot_form: selector 'input[name*='omein' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input.search' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input.domain-search' failed: Locator.click: Timeout 30000ms exceeded.
-Call log:
-  - waiti
-    screenshot_form: selector 'form input[type='text']' failed: Locator.click: Timeout 30000ms exceeded.
-Call log:
-  - waiti
-    screenshot_form: no input at https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/
-  Yourhosting: screenshot failed
+    screenshot_form: filled 'input[placeholder*='omein' i]'
+    debug saved: yourhosting-results.{png,html,meta.json}
+    vision: 0/6 prices for Yourhosting
   primary found 0/6 prices, trying LLM fallback...
   LLM extracted 1/6 prices
 
@@ -115,4 +94,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 27/48 cells filled. History: 43 run(s). ===
+=== Done. 24/48 cells filled. History: 44 run(s). ===
