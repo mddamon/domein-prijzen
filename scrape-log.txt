@@ -1,4 +1,4 @@
-=== Run 2026-06-30 ===
+=== Run 2026-07-01 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -27,14 +27,10 @@ LLM fallback: enabled
   LLM extracted 5/6 prices
 
 [Vimexx]
-  Vimexx .nl: fy=0.48 rn=0.48 (raw 0.48)
-  Vimexx .com: fy=None rn=None (raw 0.48)
-  Vimexx .eu: fy=None rn=None (raw 0.48)
-  Vimexx .be: fy=None rn=None (raw 0.48)
-  Vimexx .org: fy=None rn=None (raw None)
-  Vimexx .ai: fy=None rn=None (raw 0.48)
-  primary found 1/6 prices, trying LLM fallback...
-  LLM extracted 5/6 prices
+  fetch error https://www.vimexx.nl/domeinnaam/domeinnaam-extensies: HTTPSConnectionPool(host='www.vimexx.nl', port=443): Max retries exceeded with url: /domeinnaam/domeinnaam-extensies (Caused by NewConnectionError("HTTPSConnection(host='www.vimexx.nl', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+  primary found 0/6 prices, trying LLM fallback...
+  fetch error https://www.vimexx.nl/domeinnaam/domeinnaam-extensies: HTTPSConnectionPool(host='www.vimexx.nl', port=443): Max retries exceeded with url: /domeinnaam/domeinnaam-extensies (Caused by NewConnectionError("HTTPSConnection(host='www.vimexx.nl', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable"))
+  ! Vimexx: 0 prices extracted — parser may need updating
 
 [Yourhosting]
     debug saved: yourhosting-landing.{png,html,meta.json}
@@ -94,4 +90,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 44 run(s). ===
+=== Done. 19/48 cells filled. History: 45 run(s). ===
