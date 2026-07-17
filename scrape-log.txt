@@ -1,4 +1,4 @@
-=== Run 2026-07-16 ===
+=== Run 2026-07-17 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -48,7 +48,7 @@ LLM fallback: enabled
   Hostnet .nl: fy=0.1 rn=23.0 (col-price='23,00 0,10')
   Hostnet .com: fy=9.0 rn=27.0 (col-price='27,00 9,00')
   Hostnet .eu: fy=5.0 rn=26.5 (col-price='26,50 5,00')
-  Hostnet .be: fy=None rn=26.0 (col-price='26,00')
+  Hostnet .be: fy=1.99 rn=26.0 (col-price='26,00 1,99')
   Hostnet .org: fy=None rn=32.4 (col-price='32,40')
   Hostnet .eu: fy=5.0 rn=26.5 (col-price='26,50 5,00')
   Hostnet .nl: fy=0.1 rn=23.0 (col-price='23,00 0,10')
@@ -94,4 +94,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 60 run(s). ===
+=== Done. 24/48 cells filled. History: 61 run(s). ===
