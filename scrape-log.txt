@@ -1,4 +1,4 @@
-=== Run 2026-10-11 ===
+=== Run 2026-10-12 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -46,16 +46,8 @@ LLM fallback: enabled
   LLM extracted 1/6 prices
 
 [Hostnet]
-  Hostnet .nl: fy=0.1 rn=None (col-price='25,99 0,10')
-  Hostnet .com: fy=8.99 rn=28.99 (col-price='28,99 8,99')
-  Hostnet .eu: fy=4.99 rn=28.99 (col-price='28,99 4,99')
-  Hostnet .be: fy=1.99 rn=28.49 (col-price='28,49 1,99')
-  Hostnet .org: fy=15.49 rn=35.49 (col-price='35,49 15,49')
-  Hostnet .eu: fy=4.99 rn=28.99 (col-price='28,99 4,99')
-  Hostnet .nl: fy=0.1 rn=None (col-price='25,99 0,10')
-  Hostnet .ai: fy=99.99 rn=None (col-price='230,99 99,99')
-  Hostnet .com: fy=8.99 rn=28.99 (col-price='28,99 8,99')
-  Hostnet .org: fy=15.49 rn=35.49 (col-price='35,49 15,49')
+  primary found 0/6 prices, trying LLM fallback...
+  LLM extracted 6/6 prices
 
 [GoDaddy]
     debug saved: godaddy-landing.{png,html,meta.json}
@@ -95,4 +87,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 147 run(s). ===
+=== Done. 24/48 cells filled. History: 148 run(s). ===
