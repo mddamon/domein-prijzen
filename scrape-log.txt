@@ -1,4 +1,4 @@
-=== Run 2026-10-14 ===
+=== Run 2026-10-15 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -15,7 +15,7 @@ LLM fallback: enabled
   TransIP .com: fy=4.99 rn=None
   TransIP .eu: fy=7.99 rn=None
   TransIP .be: fy=6.99 rn=None
-  TransIP .org: fy=35.0 rn=None
+  TransIP .org: fy=None rn=None
   TransIP .ai: fy=None rn=None
 
 [Strato]
@@ -87,4 +87,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 24/48 cells filled. History: 150 run(s). ===
+=== Done. 23/48 cells filled. History: 151 run(s). ===
