@@ -1,4 +1,4 @@
-=== Run 2026-10-22 ===
+=== Run 2026-10-23 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -39,35 +39,11 @@ LLM fallback: enabled
 
 [Yourhosting]
     debug saved: yourhosting-landing.{png,html,meta.json}
-    screenshot_form: selector 'input[placeholder*='omein' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[placeholder*='omain' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[type='search']' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[name*='domain' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input[name*='omein' i]' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input.search' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'input.domain-search' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: selector 'form input[type='text']' failed: Locator.wait_for: Timeout 4000ms exceeded.
-Call log:
-  - wai
-    screenshot_form: no input at https://www.yourhosting.nl/domeinnaam-registreren/domein-kopen/
-  Yourhosting: screenshot failed
+    screenshot_form: filled 'input[placeholder*='omein' i]'
+    debug saved: yourhosting-results.{png,html,meta.json}
+    vision: 0/6 prices for Yourhosting
   primary found 0/6 prices, trying LLM fallback...
-  HTTP 503 for https://www.yourhosting.nl/domeinnaam-registreren/extensies/
-  ! Yourhosting: 0 prices extracted — parser may need updating
+  LLM extracted 1/6 prices
 
 [Hostnet]
   primary found 0/6 prices, trying LLM fallback...
@@ -111,4 +87,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 23/48 cells filled. History: 158 run(s). ===
+=== Done. 24/48 cells filled. History: 159 run(s). ===
