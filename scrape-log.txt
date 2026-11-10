@@ -1,4 +1,4 @@
-=== Run 2026-11-09 ===
+=== Run 2026-11-10 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -43,8 +43,7 @@ LLM fallback: enabled
     debug saved: yourhosting-results.{png,html,meta.json}
     vision: 0/6 prices for Yourhosting
   primary found 0/6 prices, trying LLM fallback...
-  HTTP 503 for https://www.yourhosting.nl/domeinnaam-registreren/extensies/
-  ! Yourhosting: 0 prices extracted — parser may need updating
+  LLM extracted 1/6 prices
 
 [Hostnet]
   primary found 0/6 prices, trying LLM fallback...
@@ -88,4 +87,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 23/48 cells filled. History: 176 run(s). ===
+=== Done. 24/48 cells filled. History: 177 run(s). ===
