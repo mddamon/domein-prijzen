@@ -1,4 +1,4 @@
-=== Run 2026-11-23 ===
+=== Run 2026-11-24 ===
 Playwright: enabled
 LLM fallback: enabled
 
@@ -11,7 +11,7 @@ LLM fallback: enabled
   ! Mijndomein: 0 prices extracted — parser may need updating
 
 [TransIP]
-  TransIP .nl: fy=None rn=None
+  TransIP .nl: fy=0.49 rn=None
   TransIP .com: fy=4.99 rn=None
   TransIP .eu: fy=7.99 rn=None
   TransIP .be: fy=6.99 rn=None
@@ -78,8 +78,7 @@ Call log:
     screenshot_form: no input at https://www.godaddy.com/nl
   GoDaddy: screenshot failed
   primary found 0/6 prices, trying LLM fallback...
-  LLM extracted 0/6 prices
-  ! GoDaddy: 0 prices extracted — parser may need updating
+  LLM extracted 2/6 prices
 
 [Shopify]
   Shopify .com: fy=4.6
@@ -87,4 +86,4 @@ Call log:
   primary found 2/6 prices, trying LLM fallback...
   LLM extracted 0/6 prices
 
-=== Done. 23/48 cells filled. History: 190 run(s). ===
+=== Done. 26/48 cells filled. History: 191 run(s). ===
